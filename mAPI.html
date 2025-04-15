@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Phone Verification</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f4f4f4;
+    }
+
+    .container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      width: 300px;
+    }
+
+    .container input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    .container button {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #message {
+      margin-top: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <input type="tel" id="phoneNumber" placeholder="Phone Number (+233...)">
+    <button onclick="sendOTP()">Send OTP</button>
+    <input type="text" id="otp" placeholder="Enter OTP">
+    <button onclick="verifyOTP()">Verify OTP</button>
+    <div id="message"></div>
+  </div>
+
+  <script>
+    const apiKey = "RFVwc1p1RGFseUVGY1lweFlsaWQ"; // Your API key
+    const senderId = "study hub"; // Replace with your Sender ID
+    let generatedOTP;
+    let userPhoneNumber;
+
+    async function sendOTP() {
+        userPhoneNumber = document.getElementById('phoneNumber').value;
+        const messageDiv = document.getElementById('message');
+
+        generatedOTP = Math.floor(100000 + Math.random() * 900000); // Generate 6-digit OTP
+        const message = `Your OTP is: ${generatedOTP}`;
+
+        const url = `https://sms.arkesel.com/sms/api?action=send-sms&api_key=${apiKey}&to=${userPhoneNumber}&from=${senderId}&sms=${message}`;
+
+        try {
+            const response = await fetch(url);
+            const data = await response.text();
+            console.log(data); // Log the API response
+            messageDiv.textContent = "OTP sent!";
+        } catch (error) {
+            messageDiv.textContent = "Failed to send OTP.";
+            console.error("Error sending OTP:", error);
+        }
+    }
+
+    function verifyOTP() {
+      const enteredOTP = document.getElementById('otp').value;
+      const messageDiv = document.getElementById('message');
+
+      if (parseInt(enteredOTP) === generatedOTP) {
+        messageDiv.textContent = "Phone number verified!";
+        // Redirect or perform other actions upon successful verification
+        console.log("Phone number verified");
+        // window.location.href = "/dashboard"; //example of redirect
+      } else {
+        messageDiv.textContent = "Incorrect OTP. Please try again.";
+      }
+    }
+  </script>
+
+</body>
+</html>
