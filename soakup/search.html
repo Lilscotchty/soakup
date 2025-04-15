@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/147d0f4a96.js" crossorigin="anonymous"></script>
+    <title>SOAKUP - Library</title>
+    <link rel="stylesheet" type="text/css" href="./slick-master/slick/slick-theme.css"> 
+    <link rel="stylesheet" type="text/css" href="./slick-master/slick/slick.css">
+    <style>
+        body {
+            width: 100%;
+            margin: 0;
+            font-family: "Oswald", serif;
+        }
+
+        /* Header Styles */
+        .header {
+            width: 100%;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            Gap:24%;
+            
+        }
+
+        .data{
+            width: 101px;
+            height: 95px;
+            background: ;
+            display:flex;
+            Align-items:center;
+            Justify-content:;
+            Flex-direction:column;
+            Font-size:30px;
+            Font-weight:500;
+            font-family: "Oswald", serif;
+            font-optical-sizing: auto;
+        }
+
+        .asist {
+            width: 101px;
+            height: 70px;
+        }
+
+        /* Side Menu */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100%;
+            background-color: #333;
+            color: white;
+            transition: left 0.3s ease;
+            z-index: 1001;
+        }
+
+        .side-menu ul {
+            list-style: none;
+            padding: 20px;
+        }
+
+        .side-menu li {
+            padding: 10px 0;
+            cursor: pointer;
+        }
+
+        .side-menu li:hover {
+            background-color: #444;
+        }
+
+        /* Object Container */
+        .object-cont {
+            width: 100%;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .object1 {
+            width: 94%;
+            background: #f3f3f3;
+            border-radius: 20px;
+            overflow: hidden;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .object1 img {
+            width: 100%;
+            height: auto;
+        }
+
+        /* Button Section */
+        .button {
+            width: 94%;
+            display: flex;
+            justify-content: center;
+            gap: 5%;
+            margin-top: -110px;
+            position: relative;
+        }
+
+        .btn-section1 {
+            width: 45%;
+            height: 90px;
+            border-radius: 12px;
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .main-btn1, .main-btn2 {
+            width: 60px;
+            height: 30px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .main-btn1 {
+            background: #ff7300;
+            color: black;
+        }
+
+        .main-btn2 {
+            background: #00ffea;
+            color: black;
+        }
+
+        .main-btn1:hover, .main-btn2:hover {
+            transform: scale(1.05);
+        }
+
+        .para {
+            width: 90%;
+            margin: 5px 0;
+        }
+
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1003;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        /* Featured Books */
+        .featured-books {
+            width: 94%;
+            margin: 20px auto;
+        }
+
+        .book-list {
+            display: flex;
+            overflow-x: scroll;
+            gap: 10px;
+        }
+
+        .book {
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .book img {
+            width: 100px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .book p {
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        /* Slider */
+        .slider {
+            width: 94%;
+            margin: 20px auto;
+        }
+
+        .imgo p {
+            text-align: center;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        .imgon {
+            width: 100%;
+            border-radius: 20px;
+        }
+
+        /* Content Sections */
+        .content-section {
+            width: 88%;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            display: none;
+            Margin-bottom:100px;
+            Position:absolute;
+            Top:60px;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        #search-input {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        #search button {
+            padding: 10px 20px;
+            background: #ff7300;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Bottom Navigation */
+        .base {
+            width: 100%;
+            height: 60px;
+            position: fixed;
+            bottom: 0;
+            background: white;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        .base-section {
+            display: flex;
+            justify-content: space-around;
+            Width:100%;
+        }
+
+        .microbox {
+            width: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            Gap:10px;
+        }
+
+        .microbox.active {
+            color: #ff7300;
+        }
+        
+        .user-header {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1002;
+        }
+
+        .back-arrow {
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .user-profile {
+            text-align: center;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .profile-pic {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+
+        .edit-profile {
+            background: #ff7300;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .settings, .help-support {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .settings h3, .help-support h3 {
+            margin-top: 0;
+        }
+
+        .settings ul, .help-support ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .settings li, .help-support li {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            cursor: pointer;
+        }
+
+        .settings li i, .help-support li i {
+            margin-right: 10px;
+        }
+
+        .activity {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .activity h3 {
+            margin-top: 0;
+        }
+
+        .activity-list p {
+            margin: 5px 0;
+        }
+
+        .logout {
+            width: 100%;
+            padding: 15px;
+            background: #ff7300;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            Margin-bottom:50px;
+        }
+        
+        a {
+            Text-decoration:none;
+            Color:black;
+        }
+
+        /* New Search Styles */
+        .search-container {
+            width: 100%;
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        #search-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-family: "Oswald", serif;
+            font-size: 16px;
+            min-width: 200px;
+        }
+
+        #search-btn {
+            background: #ff7300;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-family: "Oswald", serif;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        #clear-btn {
+            background: #00ffea;
+            color: black;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-family: "Oswald", serif;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        #search-btn:hover, #clear-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .filter-container {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        select {
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            font-family: "Oswald", serif;
+            font-size: 16px;
+            background: white;
+            min-width: 150px;
+        }
+
+        .results-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .book-result {
+            background: #f3f3f3;
+            padding: 15px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .book-result h3 {
+            margin: 0 0 10px;
+            color: #333;
+            font-size: 18px;
+        }
+
+        .book-result p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .available {
+            background: #00ffea;
+            color: black;
+        }
+
+        .checked-out {
+            background: #ff7300;
+            color: white;
+        }
+
+        .error-message {
+            width: 100%;
+            padding: 10px;
+            background: #ffe6e6;
+            color: #ff7300;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <i class="fa-solid fa-bars fa-xl" id="hamburger-menu"></i>
+        <div class="data"><div class="asist"></div><p>SOAKUP</p></div>
+        <i class="fa-regular fa-user fa-xl" id="profile-icon"></i>
+    </div>
+
+    <!-- Side Menu -->
+    <div id="side-menu" class="side-menu">
+        <ul>
+            <li>Settings</li>
+            <li>Help</li>
+            <li>Logout</li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="object-cont">
+        <div class="object1">
+            <p>EXPLORE</p>
+            <img src="soakup.jpg" alt="Banner">
+        </div>
+        <div class="button">
+            <div class="btn-section1">
+                <p class="para">Find your career related books.</p>
+                <div class="main-btn1" onclick="openModal('career-modal')">VISIT</div>
+            </div>
+            <div class="btn-section1">
+                <p class="para">Check out what the community likes.</p>
+                <div class="main-btn2" onclick="openModal('community-modal')">VISIT</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="career-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <p>Explore career-related books here.</p>
+        </div>
+    </div>
+    <div id="community-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <p>See what the community is liking.</p>
+        </div>
+    </div>
+
+    <!-- Featured Books -->
+    <div class="featured-books">
+        <h2>Featured Books</h2>
+        <div class="book-list">
+            <a href="pg71082-images.html"><div class="book"><img src="./images/cover.jpg" alt="Book 1"><p>Political and commercial Geology</p></div></a>
+            <a href="./soakup/book2.html"><div class="book"><img src="./images/cover.jpg" alt="Book 1"><p>Pride and prejudice</p></div></a>
+            <a href="pg71082-images.html"><div class="book"><img src="./images/cover.jpg" alt="Book 1"><p>Political and commercial Geology</p></div></a>
+            <a href="pg71082-images.html"><div class="book"><img src="./images/cover.jpg" alt="Book 1"><p>Political and commercial Geology</p></div></a>
+            <a href="pg71082-images.html"><div class="book"><img src="./images/cover.jpg" alt="Book 1"><p>Political and commercial Geology</p></div></a>
+            <a href="pg71082-images.html"><div class="book"><img src="./images/cover.jpg" alt="Book 1"><p>Political and commercial Geology</p></div></a>
+            <div class="book"><img src="imgb2.jpg" alt="Book 2"><p>Book Title 2</p></div>
+            <div class="book"><img src="imgb1.jpg" alt="Book 3"><p>Book Title 3</p></div>
+            <div class="book"><img src="imgb2.jpg" alt="Book 2"><p>Book Title 2</p></div>
+            <div class="book"><img src="imgb1.jpg" alt="Book 3"><p>Book Title 3</p></div>
+        </div>
+    </div>
+
+    <!-- Slider -->
+    <section class="lazy slider">
+        <div class="imgo"><img src="./imgs.jpg" class="imgon"><p>Book Cover 1</p></div>
+        <div class="imgo"><img src="./imga.jpg" class="imgon"><p>Book Cover 2</p></div>
+        <div class="imgo"><img src="./imgb1.jpg" class="imgon"><p>Book Cover 3</p></div>
+        <div class="imgo"><img src="./img.jpg" class="imgon"><p>Book Cover 4</p></div>
+    </section>
+
+    <!-- Content Sections -->
+    <div id="home" class="content-section active">
+        <h2>Home</h2>
+        <p>Welcome to SOAKUP! Explore books and more.</p>
+    </div>
+    <div id="foryou" class="content-section">
+        <h2>For You</h2>
+        <p>Personalized recommendations based on your interests.</p>
+    </div>
+    <div id="search" class="content-section">
+        <h2>Search Books</h2>
+        
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search by title, author, or ISBN...">
+            <button id="search-btn"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+            <button id="clear-btn"><i class="fa-solid fa-times"></i> Clear</button>
+        </div>
+
+        <div class="filter-container">
+            <select id="sort-select">
+                <option value="title-asc">Title (A-Z)</option>
+                <option value="title-desc">Title (Z-A)</option>
+                <option value="year-asc">Year (Oldest)</option>
+                <option value="year-desc">Year (Newest)</option>
+            </select>
+            
+            <select id="status-filter">
+                <option value="all">All Books</option>
+                <option value="available">Available</option>
+                <option value="checked-out">Checked Out</option>
+            </select>
+        </div>
+
+        <div id="error-message" class="error-message">No books found matching your criteria.</div>
+        <div id="search-results" class="results-container"></div>
+    </div>
+    <div id="library" class="content-section">
+        <h2>Library</h2>
+        <p>Your borrowed and favorite books.</p>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="base">
+        <div class="base-section">
+            <div class="microbox active"><i class="fa-solid fa-house fa-xl"></i><div>Home</div></div>
+            <div class="microbox" onclick="showSection('foryou')"><i class="fa-regular fa-compass fa-xl"></i><div>For you</div></div>
+            <div class="microbox" onclick="showSection('search')"><i class="fa-solid fa-magnifying-glass fa-xl"></i><div>Search</div></div>
+            <div class="microbox" onclick="showSection('library')"><i class="fa-solid fa-bookmark fa-xl"></i><div>Library</div></div>
+        </div>
+    </div>
+
+    <!-- User Area -->
+    <div id="user-area" class="content-section">
+        <div class="user-header">
+            <i class="fa-solid fa-arrow-left fa-xl back-arrow"></i>
+            <h2>User Area</h2>
+        </div>
+        <div class="user-profile">
+            <img src="./imgb2.jpg" alt="Profile Picture" class="profile-pic">
+            <h2>John Doe</h2>
+            <p>john.doe@example.com</p>
+            <button class="edit-profile">Edit Profile</button>
+        </div>
+        <div class="settings">
+            <h3>Settings</h3>
+            <ul>
+                <li><i class="fa-solid fa-key"></i> Change Password</li>
+                <li><i class="fa-solid fa-bell"></i> Notifications</li>
+                <li><i class="fa-solid fa-shield"></i> Privacy</li>
+                <li><i class="fa-solid fa-globe"></i> Language</li>
+            </ul>
+        </div>
+        <div class="activity">
+            <h3>Recent Activity</h3>
+            <div class="activity-list">
+                <!-- Dynamic content will be added here -->
+            </div>
+        </div>
+        <div class="help-support">
+            <h3>Help & Support</h3>
+            <ul>
+                <li><i class="fa-solid fa-question-circle"></i> FAQ</li>
+                <li><i class="fa-solid fa-envelope"></i> Contact Us</li>
+            </ul>
+        </div>
+        <button class="logout">Logout</button>
+    </div>
+    <br>
+    <br>
+
+    <!-- Bottom Navigation -->
+    <div class="base">
+        <div class="base-section">
+            <div class="microbox active" onclick="showSection('home')"><i class="fa-solid fa-house fa-xl"></i><div>Home</div></div>
+            <div class="microbox" onclick="showSection('foryou')"><i class="fa-regular fa-compass fa-xl"></i><div>For you</div></div>
+            <div class="microbox" onclick="showSection('search')"><i class="fa-solid fa-magnifying-glass fa-xl"></i><div>Search</div></div>
+            <div class="microbox" onclick="showSection('library')"><i class="fa-solid fa-bookmark fa-xl"></i><div>Library</div></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-2.2.0.min.js" type="text/javascript"></script>
+    <script src="./slick-master/slick/slick.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+        $(document).on('ready', function() {
+            $(".lazy").slick({
+                lazyLoad: 'ondemand',
+                infinite: true,
+                autoplay: true,
+                autoplaySpeed: 5000,
+                dots: true,
+                slidesToShow: 2,
+                slidesToScroll: 1
+            });
+        });
+
+        // Side Menu Toggle
+        document.getElementById('hamburger-menu').addEventListener('click', function() {
+            const sideMenu = document.getElementById('side-menu');
+            sideMenu.style.left = sideMenu.style.left === '0px' ? '-250px' : '0px';
+        });
+
+        // Modal Functionality
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        document.querySelectorAll('.close').forEach(function(closeBtn) {
+            closeBtn.addEventListener('click', function() {
+                this.closest('.modal').style.display = 'none';
+            });
+        });
+
+        window.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        });
+
+        // Section Switching
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(function(section) {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+
+            document.querySelectorAll('.microbox').forEach(function(box) {
+                box.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+        }
+
+        // Original Search Functionality (replaced)
+        // function searchBooks() {
+        //     const searchInput = document.getElementById('search-input').value.toLowerCase();
+        //     const resultsDiv = document.getElementById('search-results');
+        //     resultsDiv.innerHTML = '';
+
+        //     const books = [
+        //         { title: 'Book One', author: 'Author A' },
+        //         { title: 'Book Two', author: 'Author B' },
+        //         { title: 'Another Book', author: 'Author C' }
+        //     ];
+
+        //     const filteredBooks = books.filter(book => book.title.toLowerCase().includes(searchInput));
+
+        //     if (filteredBooks.length > 0) {
+        //         filteredBooks.forEach(book => {
+        //             const p = document.createElement('p');
+        //             p.textContent = `${book.title} by ${book.author}`;
+        //             resultsDiv.appendChild(p);
+        //         });
+        //     } else {
+        //         resultsDiv.textContent = 'No books found.';
+        //     }
+        // }
+
+        // New Search Functionality
+        const books = [
+            { title: "To Kill a Mockingbird", author: "Harper Lee", isbn: "978-0446310789", year: 1960, status: "available" },
+            { title: "1984", author: "George Orwell", isbn: "978-0451524935", year: 1949, status: "checked-out" },
+            { title: "The Great Gatsby", author: "F. Scott Fitzgerald", isbn: "978-0743273565", year: 1925, status: "available" },
+            { title: "Pride and Prejudice", author: "Jane Austen", isbn: "978-0141439518", year: 1813, status: "available" },
+            { title: "The Catcher in the Rye", author: "J.D. Salinger", isbn: "978-0316769488", year: 1951, status: "checked-out" }
+        ];
+
+        function searchAndFilterBooks(query, statusFilter) {
+            query = query.toLowerCase().trim();
+            let filteredBooks = books;
+
+            if (query) {
+                filteredBooks = filteredBooks.filter(book => 
+                    book.title.toLowerCase().includes(query) ||
+                    book.author.toLowerCase().includes(query) ||
+                    book.isbn.includes(query)
+                );
+            }
+
+            if (statusFilter !== "all") {
+                filteredBooks = filteredBooks.filter(book => book.status === statusFilter);
+            }
+
+            return filteredBooks;
+        }
+
+        function sortBooks(books, sortOption) {
+            const [field, direction] = sortOption.split('-');
+            return [...books].sort((a, b) => {
+                if (field === "title") {
+                    return direction === "asc" 
+                        ? a.title.localeCompare(b.title) 
+                        : b.title.localeCompare(a.title);
+                } else if (field === "year") {
+                    return direction === "asc" 
+                        ? a.year - b.year 
+                        : b.year - a.year;
+                }
+            });
+        }
+
+        function displayResults(results) {
+            const resultsContainer = document.getElementById('search-results');
+            const errorMessage = document.getElementById('error-message');
+            resultsContainer.innerHTML = '';
+
+            if (results.length === 0) {
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            errorMessage.style.display = 'none';
+            
+            results.forEach(book => {
+                const bookDiv = document.createElement('div');
+                bookDiv.className = 'book-result';
+                bookDiv.innerHTML = `
+                    <h3>${book.title}</h3>
+                    <p>Author: ${book.author}</p>
+                    <p>ISBN: ${book.isbn}</p>
+                    <p>Year: ${book.year}</p>
+                    <p>Status: <span class="status ${book.status}">${book.status.replace('-', ' ')}</span></p>
+                `;
+                resultsContainer.appendChild(bookDiv);
+            });
+        }
+
+        function performSearch() {
+            const query = document.getElementById('search-input').value;
+            const statusFilter = document.getElementById('status-filter').value;
+            const sortOption = document.getElementById('sort-select').value;
+            
+            let results = searchAndFilterBooks(query, statusFilter);
+            results = sortBooks(results, sortOption);
+            displayResults(results);
+        }
+
+        // Event Listeners
+        document.getElementById('search-btn').addEventListener('click', performSearch);
+
+        document.getElementById('search-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') performSearch();
+        });
+
+        document.getElementById('clear-btn').addEventListener('click', () => {
+            document.getElementById('search-input').value = '';
+            document.getElementById('status-filter').value = 'all';
+            document.getElementById('sort-select').value = 'title-asc';
+            displayResults(sortBooks(books, 'title-asc'));
+        });
+
+        document.getElementById('sort-select').addEventListener('change', performSearch);
+        document.getElementById('status-filter').addEventListener('change', performSearch);
+
+        // Initial display when search section is opened
+        document.querySelector('.microbox[onclick="showSection(\'search\')"]').addEventListener('click', () => {
+            displayResults(sortBooks(books, 'title-asc'));
+        });
+    </script>
+    <script>
+        // Show User Area
+        const aly = document.getElementById("profile-icon"); 
+        const bar = document.getElementById("user-area");  
+        aly.addEventListener('click', () => {
+            bar.classList.add('anime');
+        });       
+        document.getElementById('profile-icon').addEventListener('click', function() {
+            showSection('user-area');
+        });
+
+        // Back to Main Content
+        document.querySelector('.back-arrow').addEventListener('click', function() {
+            document.getElementById('user-area').classList.remove('active');
+            document.getElementById('home').classList.add('active');
+        });
+
+        // Populate Activity List (Sample Data)
+        const activityList = document.querySelector('.activity-list');
+        const activities = ['Read "Book One"', 'Saved "Book Two"', 'Searched for "Author A"'];
+        activities.forEach(activity => {
+            const p = document.createElement('p');
+            p.textContent = activity;
+            activityList.appendChild(p);
+        });
+
+        // Section Switching Function
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(function(section) {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+
+            // Update bottom navigation active state (except for user-area)
+            if (sectionId !== 'user-area') {
+                document.querySelectorAll('.microbox').forEach(function(box) {
+                    box.classList.remove('active');
+                });
+                document.querySelector(`.microbox[onclick="showSection('${sectionId}')"]`).classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

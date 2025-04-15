@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoakUp - African Studies Quiz</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #eef2f7;
+            margin: 0;
+            padding: 0px;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            width: 95%;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #1a202c;
+            margin-bottom: 20px;
+        }
+        .progress-bar {
+            width: 100%;
+            background: #e2e8f0;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            background: #48bb78;
+            width: 0%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        .timer {
+            text-align: right;
+            font-size: 16px;
+            color: #4a5568;
+            margin-bottom: 20px;
+        }
+        .question {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2d3748;
+        }
+        .options label {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #f7fafc;
+            margin: 8px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        .options label:hover {
+            background: #edf2f7;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        input[type="radio"] {
+            margin-right: 12px;
+            accent-color: #3182ce;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+            gap: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.1s;
+        }
+        button:hover {
+            transform: translateY(-1px);
+        }
+        button:disabled {
+            background: #e2e8f0;
+            color: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+        }
+        #prev {
+            background: #718096;
+            color: #fff;
+        }
+        #prev:hover:not(:disabled) {
+            background: #5a6270;
+        }
+        #next {
+            background: #3182ce;
+            color: #fff;
+        }
+        #next:hover:not(:disabled) {
+            background: #2b6cb0;
+        }
+        #submit {
+            background: #e53e3e;
+            color: #fff;
+        }
+        #submit:hover:not(:disabled) {
+            background: #c53030;
+        }
+        #result {
+            margin-top: 30px;
+            font-size: 3px; /* Corrected from 3px to 18px */
+            color: #2d3748;
+        }
+        .result-header {
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+        .review-table {
+            width: 100%; /* Corrected from 100px to 100% */
+            border-collapse: collapse;
+            margin-top: 20px;
+            margin: auto;
+        }
+        .review-table th, .review-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+            word-wrap: break-word;
+            max-width: 200px; /* Added to prevent overflow */
+        }
+        .review-table th {
+            background: #edf2f7;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        .correct {
+            color: #48bb78;
+            font-weight: 500;
+        }
+        .incorrect {
+            color: #e53e3e;
+            font-weight: 500;
+        }
+        .correct-answer {
+            color: #48bb78;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Communication skills (Spellings and Punctuations)</h1>
+        <div class="progress-bar">
+            <div class="progress"></div>
+        </div>
+        <div class="timer">Time: <span id="time">00:00</span></div>
+        <div id="quiz"></div>
+        <div class="buttons">
+            <button id="prev" disabled>Previous</button>
+            <button id="submit">Submit</button>
+            <button id="next">Next</button>
+        </div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+   const quizData = [
+    // Spelling Rules Questions
+    { question: "What is the general rule for spelling words with 'i' and 'e'?", options: ["Always write 'e' before 'i'", "Always write 'i' before 'e', except after 'c'", "Always write 'e' before 'i' after 'c'", "There is no specific rule"], answer: "b" },
+    { question: "Which word follows the exception to the 'i before e' rule after the letter 'c'?", options: ["Believe", "Receive", "Weigh", "Freight"], answer: "b" },
+    { question: "What sound does the 'ei' combination make in words like 'neighbour' and 'weigh'?", options: ["'ee' sound", "'ay' sound", "'ie' sound", "'eh' sound"], answer: "b" },
+    { question: "Which word does NOT follow the 'i before e' rule due to the 'neighbour' and 'weigh' exception?", options: ["Chief", "Veil", "Piece", "Brief"], answer: "b" },
+    { question: "Which of the following words is spelled correctly according to the 'i before e' rule?", options: ["Decieve", "Believe", "Reciept", "Foriegn"], answer: "b" },
+    { question: "What should you do if a word contains the letter 'c' before 'i' and 'e'?", options: ["Write 'i' before 'e'", "Write 'e' before 'i'", "Write 'i' and 'e' in any order", "Omit the 'e'"], answer: "b" },
+    { question: "Which word is an exception to the 'i before e' rule that must be memorized?", options: ["Weird", "Relief", "Shield", "Grief"], answer: "a" },
+    { question: "Why is it important to learn the 'i before e' rule in academic writing?", options: ["It improves vocabulary", "It ensures correct spelling for better communication", "It helps with punctuation", "It enhances reading speed"], answer: "b" },
+    { question: "Which word correctly applies the 'i before e' rule?", options: ["Peice", "Thief", "Deciet", "Wieght"], answer: "b" },
+    { question: "In the sentence 'The traveller checked her receipt,' which word follows the 'i before e' exception after 'c'?", options: ["Traveller", "Checked", "Receipt", "Her"], answer: "c" },
+
+    // Punctuation Questions
+    { question: "What is the primary purpose of punctuation in writing, according to the passage?", options: ["To add decoration", "To confuse the reader", "To clarify meaning within sentences", "To increase word count"], answer: "c" },
+    { question: "What should a student do if punctuation creates ambiguity in a sentence?", options: ["Ignore it", "Rewrite the sentence for clarity", "Add more punctuation", "Remove all punctuation"], answer: "b" },
+    { question: "In the sentence 'Vice-Chancellor says, It is not you, it is your punctuation,' what punctuation mark is missing after 'says'?", options: ["Comma", "Period", "Quotation mark", "Colon"], answer: "c" },
+    { question: "What type of punctuation mark is used to enclose non-essential information, as seen in the passage?", options: ["Comma", "Parentheses", "Colon", "Semicolon"], answer: "b" },
+    { question: "In the sentence 'First, we will examine four punctuation marks,' what role does the comma play?", options: ["Separates a list", "Introduces a statement", "Encloses extra information", "Joins two clauses"], answer: "b" },
+    { question: "Which punctuation mark is used to separate the two independent clauses in 'In writing, the student should use correct punctuation; however, the reader can see punctuation marks'?", options: ["Comma", "Semicolon", "Colon", "Period"], answer: "b" },
+    { question: "What is the correct punctuation for the sentence 'The prisoners leg had been ___ and the cell door ___'?", options: ["bared, barred", "barred, bared", "bared, bared", "barred, barred"], answer: "a" },
+    { question: "In the sentence 'My sister was ___ the fruit, an antique chair and ___ it,' what are the correct words to fill the blanks?", options: ["canning, canning", "caning, canning", "canning, caning", "caning, caning"], answer: "c" },
+    { question: "What punctuation mark is used to introduce direct speech in 'Vice-Chancellor says It is not you, it is your punctuation'?", options: ["Comma", "Colon", "Quotation mark", "Semicolon"], answer: "c" },
+    { question: "Which sentence correctly uses punctuation to avoid ambiguity?", options: ["The wife checked her husbands speech", "The wife checked her husband's speech.", "The wife checked her husbands' speech", "The wife checked her husband speech"], answer: "b" },
+    
+    // Comma Usage Questions
+    { question: "What is the primary purpose of a comma in a sentence?", options: ["To indicate possession", "To separate parts of a sentence", "To introduce a quotation", "To connect two independent clauses"], answer: "b" },
+    { question: "Which type of comma is used in the sentence 'Honestly, I don’t want to join this group'?", options: ["Coordinator comma", "Inserter comma", "Introductory comma", "Tag comma"], answer: "c" },
+    { question: "In the sentence 'I went to the Accra Mall to buy laptop, printer, scanner and memory stick,' what is the role of the commas?", options: ["To separate items in a list", "To introduce a clause", "To connect two clauses", "To add extra information"], answer: "a" },
+    { question: "What type of comma is used in 'The students prepared well for the examination, yet they failed'?", options: ["Introductory comma", "Coordinator comma", "Inserter comma", "Tag comma"], answer: "b" },
+    { question: "In the sentence 'The man, who came here, is my father,' what role do the commas play?", options: ["Separate a list", "Introduce a quotation", "Add extra information", "Connect two clauses"], answer: "c" },
+    { question: "What is the purpose of the tag comma in 'We have benefited a lot from Distance Education, to tell you the truth'?", options: ["To separate a list", "To add an element at the end", "To introduce a clause", "To connect two sentences"], answer: "b" },
+    { question: "How are commas used with large numbers, such as 5,000,000?", options: ["To split the number for clarity", "To indicate a decimal", "To separate clauses", "To show possession"], answer: "a" },
+
+    // Colon and Semi-colon Usage Questions
+    { question: "What is one of the main functions of a colon according to the passage?", options: ["To separate two independent clauses", "To introduce a list or clarification", "To show possession", "To indicate a pause"], answer: "b" },
+    { question: "In the sentence 'I need some vegetables for the sauce: tomatoes, peppers and onions,' what is the role of the colon?", options: ["To separate two clauses", "To introduce a list", "To add extra information", "To show a pause"], answer: "b" },
+    { question: "What does a semi-colon do in the sentence 'Ama is brilliant; she passed all the WASSCE papers'?", options: ["Introduces a list", "Separates two related independent clauses", "Adds extra information", "Indicates possession"], answer: "b" },
+    { question: "Why should the second clause after a semi-colon not be capitalized, as noted in the passage?", options: ["It is a grammatical error", "The two clauses are closely linked", "It is a stylistic choice", "It indicates a list"], answer: "b" },
+    { question: "In the sentence 'Three cities in Ghana were locked down during COVID-19: Kumasi, Accra and Kasoa,' what punctuation mark introduces the list of cities?", options: ["Comma", "Semi-colon", "Colon", "Dash"], answer: "c" },
+
+    // Dash, Hyphen, and Apostrophe Usage Questions
+    { question: "What is the purpose of the dash in 'The room has been furnished with a lot of items – television, furniture, fridge and coffee table'?", options: ["To separate two independent clauses", "To introduce a list with emphasis", "To show possession", "To connect compound words"], answer: "b" },
+    { question: "How does the hyphen function in the word 'well-balanced' in the passage?", options: ["Shows possession", "Separates two clauses", "Combines words to form a compound term", "Introduces a list"], answer: "c" },
+    { question: "What is one key difference between a hyphen and a dash, according to the passage?", options: ["A hyphen separates clauses; a dash combines words", "A hyphen combines words; a dash separates or emphasizes", "A hyphen shows possession; a dash introduces lists", "A hyphen adds extra information; a dash connects clauses"], answer: "b" },
+    { question: "In the sentence 'The employees – they were each due to retire – received citations,' how is the dash used?", options: ["To introduce a list", "To show possession", "To emphasize extra information", "To connect two clauses"], answer: "c" },
+    { question: "What is the role of the apostrophe in 'Kojo’s book'?", options: ["To show possession", "To form a contraction", "To separate clauses", "To introduce a list"], answer: "a" },
+    { question: "Why do possessive pronouns like 'yours' and 'ours' not use an apostrophe?", options: ["They are contractions", "They already indicate possession", "They are plural forms", "They are not possessive"], answer: "b" },
+
+    // Application and Critical Thinking Questions
+    { question: "Which punctuation mark would best replace the colon in 'Admission to the B-Tech programme has three key requirements: a good first degree, a two-year working experience and a strong background in computer applications,' if you wanted to connect two independent clauses instead?", options: ["Comma", "Semi-colon", "Dash", "Hyphen"], answer: "b" },
+    { question: "What should a writer do if they are unsure whether to use a hyphen or a dash in a sentence?", options: ["Use a comma instead", "Consult the context and purpose of the sentence", "Omit the punctuation", "Use both interchangeably"], answer: "b" }, 
+
+    // New Questions Based on the Provided Images
+    { question: "What is the main purpose of using brackets/parentheses in a sentence, according to the passage?", options: ["To change the meaning of the sentence", "To enclose optional or extra information", "To introduce a quotation", "To separate two independent clauses"], answer: "b" },
+    { question: "In the sentence 'Our class embarked on an excursion to mining companies (Newmont Ghana, AngloGold Ashanti Limited and Goldstone Resources Limited),' what do the parentheses do?", options: ["Introduce the main idea", "Provide essential information", "List specific examples as extra information", "Separate two independent clauses"], answer: "c" },
+    { question: "How can parentheses be replaced in the sentence 'Modern employers look for (1) Communication Skills, (2) Technical competence, and (3) ability to work in harmony with co-workers'?", options: ["With quotation marks", "With commas", "With colons", "With semicolons"], answer: "b" },
+    { question: "What is the correct capitalization for the title of a book mentioned in the passage?", options: ["Exploring public relations", "Exploring Public Relations", "EXPLORING PUBLIC RELATIONS", "exploring Public Relations"], answer: "b" },
+    { question: "In the sentence 'The capital letter is used for the first letter in a word,' what should be capitalized?", options: ["The word 'capital'", "The word 'letter'", "The first word 'The'", "The word 'word'"], answer: "c" },
+    { question: "What does the ellipsis (...) indicate in the sentence 'According to Kwagyir Aggrey, if you...but if you educate a woman you educate the whole nation...'?", options: ["A completed thought", "An intentional pause or omission", "A grammatical error", "A direct quotation"], answer: "b" },
+    { question: "How is the slash (/) used in the phrase '5ft./min.' as per the passage?", options: ["To show alternatives", "To separate two independent clauses", "To represent 'per' in measurements", "To introduce a quotation"], answer: "c" },
+    { question: "In the sentence 'The teacher said, \"The consultant is back.\"' where should the comma be placed?", options: ["After 'said'", "After 'consultant'", "After 'back'", "Before 'said'"], answer: "a" },
+    { question: "What type of quotation marks are used for direct quotations in the passage?", options: ["Run-in quotations", "Block quotations", "Single quotation marks", "No quotation marks"], answer: "a" },
+    { question: "Why is it important to use a variety of sentence types in academic writing, as mentioned in the activity section?", options: ["To make writing more monotonous", "To confuse the reader", "To avoid boring and repetitive writing", "To reduce the word count"], answer: "c" }
+
+]; 
+       let currentQuestion = 0;
+        let score = 0;
+        let userAnswers = [];
+        let time = 0;
+        let timerInterval;
+
+        const quizContainer = document.getElementById("quiz");
+        const prevButton = document.getElementById("prev");
+        const nextButton = document.getElementById("next");
+        const submitButton = document.getElementById("submit");
+        const resultDiv = document.getElementById("result");
+        const progress = document.querySelector(".progress");
+        const timeDisplay = document.getElementById("time");
+
+        // Airtable Configuration
+        const airtableBaseId = "appBA8BDAjCnEwbEb"; 
+        const airtableTableName = "QuizResults";
+        const airtablePAT = "patcwZljMJW2c5hsB.f6498a1b5ec099669bf6add2580a7a60b7ef735df03b18ecc39bfbea6303edd3";
+
+        // Start Timer
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                time++;
+                let minutes = Math.floor(time / 60);
+                let seconds = time % 60;
+                timeDisplay.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+            }, 1000);
+        }
+
+        // Load Question
+        function loadQuestion() {
+            const q = quizData[currentQuestion];
+            quizContainer.innerHTML = `
+                <div class="question">${currentQuestion + 1}. ${q.question}</div>
+                <div class="options">
+                    ${q.options.map((option, index) => `
+                        <label>
+                            <input type="radio" name="q${currentQuestion}" value="${String.fromCharCode(97 + index)}" ${userAnswers[currentQuestion] === String.fromCharCode(97 + index) ? "checked" : ""}>
+                            ${option}
+                        </label>
+                    `).join("")}
+                </div>
+            `;
+            updateProgress();
+            prevButton.disabled = currentQuestion === 0;
+            nextButton.disabled = currentQuestion === - 1;
+        }
+
+        // Update Progress Bar
+        function updateProgress() {
+            const percentage = ((currentQuestion + 1) / quizData.length) * 100;
+            progress.style.width = `${percentage}%`;
+        }
+
+        // Save Answer
+        function saveAnswer() {
+            const selected = document.querySelector(`input[name="q${currentQuestion}"]:checked`);
+            userAnswers[currentQuestion] = selected ? selected.value : null;
+        }
+
+        // Show Result with Improved Review
+        function showResult() {
+            clearInterval(timerInterval);
+            score = 0;
+            quizData.forEach((q, index) => {
+                if (userAnswers[index] === q.answer) score++;
+            });
+            quizContainer.innerHTML = "";
+            resultDiv.innerHTML = `
+                <div class="result-header">
+                    You scored ${score} out of ${quizData.length} (${Math.round((score / quizData.length) * 100)}%) in ${timeDisplay.textContent}
+                </div>
+                <table class="review-table">
+                    <thead>
+                        <tr>
+                            <th>Question</th>
+                            <th>Your Answer</th>
+                            <th>Correct Answer</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${quizData.map((q, i) => `
+                            <tr>
+                                <td>${i + 1}. ${q.question}</td>
+                                <td>${userAnswers[i] ? q.options[userAnswers[i].charCodeAt(0) - 97] : "Not answered"}</td>
+                                <td>${q.options[q.answer.charCodeAt(0) - 97]}</td>
+                                <td class="${userAnswers[i] === q.answer ? 'correct' : 'incorrect'}">
+                                    ${userAnswers[i] === q.answer ? "Correct" : "Incorrect"}
+                                </td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
+            `;
+            saveToServer();
+            prevButton.style.display = "none";
+            nextButton.style.display = "none";
+            submitButton.style.display = "none";
+        }
+
+
+function saveToServer() {
+    const data = {
+        fields: {
+            UserID: "user123", 
+            QuizName: "African Studies Quiz",
+            Score: score,
+            Total: quizData.length,
+            Time: time,
+            Answers: JSON.stringify(userAnswers),
+            Date: new Date().toISOString()
+        }
+    };
+
+    fetch(`https://api.airtable.com/v0/${airtableBaseId}/${airtableTableName}`, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${airtablePAT}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(responseData => {
+        resultDiv.innerHTML += "<br><span class='correct'>Results saved successfully to Airtable! Record ID: " + responseData.id + "</span>";
+        console.log("Data saved to Airtable:", responseData);
+    })
+    .catch(error => {
+        resultDiv.innerHTML += "<br><span class='incorrect'>Error saving results to Airtable: " + error.message + "</span>";
+        console.error("Error saving to Airtable:", error);
+    });
+}
+
+// Event Listeners (unchanged from your code)
+prevButton.addEventListener("click", () => {
+    saveAnswer();
+    currentQuestion--;
+    loadQuestion();
+});
+
+nextButton.addEventListener("click", () => {
+    saveAnswer();
+    if (currentQuestion < quizData.length - 1) {
+        currentQuestion++;
+        loadQuestion();
+    }
+});
+
+submitButton.addEventListener("click", () => {
+    saveAnswer();
+    showResult();
+});
+
+// Initialize Quiz (unchanged from your code)
+startTimer();
+loadQuestion();
+    </script>
+</body>
+</html>

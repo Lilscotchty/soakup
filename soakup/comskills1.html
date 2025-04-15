@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoakUp - African Studies Quiz</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #eef2f7;
+            margin: 0;
+            padding: 0px;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            width: 95%;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #1a202c;
+            margin-bottom: 20px;
+        }
+        .progress-bar {
+            width: 100%;
+            background: #e2e8f0;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            background: #48bb78;
+            width: 0%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        .timer {
+            text-align: right;
+            font-size: 16px;
+            color: #4a5568;
+            margin-bottom: 20px;
+        }
+        .question {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2d3748;
+        }
+        .options label {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #f7fafc;
+            margin: 8px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        .options label:hover {
+            background: #edf2f7;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        input[type="radio"] {
+            margin-right: 12px;
+            accent-color: #3182ce;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+            gap: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.1s;
+        }
+        button:hover {
+            transform: translateY(-1px);
+        }
+        button:disabled {
+            background: #e2e8f0;
+            color: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+        }
+        #prev {
+            background: #718096;
+            color: #fff;
+        }
+        #prev:hover:not(:disabled) {
+            background: #5a6270;
+        }
+        #next {
+            background: #3182ce;
+            color: #fff;
+        }
+        #next:hover:not(:disabled) {
+            background: #2b6cb0;
+        }
+        #submit {
+            background: #e53e3e;
+            color: #fff;
+        }
+        #submit:hover:not(:disabled) {
+            background: #c53030;
+        }
+        #result {
+            margin-top: 30px;
+            font-size: 3px; /* Corrected from 3px to 18px */
+            color: #2d3748;
+        }
+        .result-header {
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+        .review-table {
+            width: 100%; /* Corrected from 100px to 100% */
+            border-collapse: collapse;
+            margin-top: 20px;
+            margin: auto;
+        }
+        .review-table th, .review-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+            word-wrap: break-word;
+            max-width: 200px; /* Added to prevent overflow */
+        }
+        .review-table th {
+            background: #edf2f7;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        .correct {
+            color: #48bb78;
+            font-weight: 500;
+        }
+        .incorrect {
+            color: #e53e3e;
+            font-weight: 500;
+        }
+        .correct-answer {
+            color: #48bb78;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Communication skills (communication)</h1>
+        <div class="progress-bar">
+            <div class="progress"></div>
+        </div>
+        <div class="timer">Time: <span id="time">00:00</span></div>
+        <div id="quiz"></div>
+        <div class="buttons">
+            <button id="prev" disabled>Previous</button>
+            <button id="submit">Submit</button>
+            <button id="next">Next</button>
+        </div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+       
+         const quizData = [
+    // Written Communication
+    { question: "What is the primary benefit of written communication?", options: ["It is faster than verbal communication", "It provides a permanent record", "It is more personal", "It requires less effort"], answer: "b" },
+    { question: "Which of the following is a disadvantage of written communication?", options: ["It is impersonal or unfriendly", "It enhances organizational image", "It assists in delegation of responsibilities", "It provides ready records"], answer: "a" },
+    { question: "What does written communication help in laying down?", options: ["Temporary policies", "Apparent principles, policies, and rules", "Informal guidelines", "Personal opinions"], answer: "b" },
+
+    // Proxemics and Chronemics
+    { question: "What does proxemics refer to in communication?", options: ["The use of eye contact", "The distance or space between people", "The tone of voice", "The use of gestures"], answer: "b" },
+    { question: "According to the text, what does chronemics involve?", options: ["The use of touch", "The communication of time", "The use of visual aids", "The arrangement of words"], answer: "b" },
+    { question: "What might standing far away from an elderly person communicate?", options: ["Respect", "Disrespect", "Intimacy", "Agreement"], answer: "b" },
+
+    // Vocalics and Visual Communication
+    { question: "Which of the following is an example of vocalics?", options: ["Handshakes", "Clearing the throat", "Eye contact", "Body posture"], answer: "b" },
+    { question: "What is the main purpose of visual communication?", options: ["To convey messages through touch", "To use images and pictures to communicate", "To provide verbal instructions", "To enhance written records"], answer: "b" },
+    { question: "Which sound is NOT considered a vocalic?", options: ["Yawning", "Laughing", "Clapping", "Weeping"], answer: "c" },
+
+    // Non-Verbal Communication
+    { question: "According to Argyle (1970), how many primary functions does nonverbal bodily behavior have?", options: ["Three", "Four", "Five", "Six"], answer: "c" },
+    { question: "Which is NOT a function of nonverbal communication per Argyle?", options: ["Express emotions", "Accompany speech", "Provide immediate feedback", "Self-presentation"], answer: "c" },
+    { question: "What does kinesics refer to?", options: ["The use of eye contact", "The use of gestures and body movement", "The use of voice tone", "The use of written text"], answer: "b" },
+    { question: "Which gesture indicates approval?", options: ["Shaking of heads", "Nodding", "Frowning", "Beckoning"], answer: "b" },
+
+    // Haptics and Oculesics
+    { question: "What is the key non-verbal element used in haptics communication?", options: ["Eye contact", "Touch", "Voice tone", "Posture"], answer: "b" },
+    { question: "What does a handshake typically communicate?", options: ["Disrespect", "Greeting or agreement", "Anger", "Dismissal"], answer: "b" },
+    { question: "How does oculesics influence communication?", options: ["Through body movement", "Through eye contact", "Through touch", "Through written text"], answer: "b" },
+    { question: "What might avoiding eye contact indicate during an interaction?", options: ["Respect", "Disrespect", "Confidence", "Attention"], answer: "b" },
+
+    // Objectics and Communication Process
+    { question: "Which is an example of objectics?", options: ["Smiling", "Wearing a suit", "Nodding", "Clearing throat"], answer: "b" },
+    { question: "What does the way you dress communicate according to objectics?", options: ["Your verbal skills", "Something about you without uttering a word", "Your educational background", "Your age"], answer: "b" },
+    { question: "Which is the first stage in the communication process?", options: ["Receiver", "Sender", "Message", "Feedback"], answer: "b" },
+    { question: "What does encoding refer to in the communication process?", options: ["Decoding the message", "Symbolizing the message", "Sending feedback", "Receiving the message"], answer: "b" },
+
+    // Channel and Feedback
+    { question: "What is the role of the channel in communication?", options: ["To decode the message", "To send the message from sender to receiver", "To provide feedback", "To initiate the message"], answer: "b" },
+    { question: "Which is an example of a communication channel?", options: ["Thoughts", "Email", "Emotions", "Gestures"], answer: "b" },
+    { question: "What is the purpose of feedback in the communication process?", options: ["To initiate the message", "To evaluate the success of communication", "To encode the message", "To select the channel"], answer: "b" },
+    { question: "What does silence indicate as a form of feedback in the classroom?", options: ["Understanding", "Confusion or lack of response", "Agreement", "Disrespect"], answer: "b" },
+
+    // Communication Media and Receiver
+    { question: "Which factor is of fundamental importance when choosing a communication media?", options: ["Cost", "Reliability", "Speed", "Appearance"], answer: "b" },
+    { question: "What should be considered about the receiver when selecting a communication medium?", options: ["Their location", "Their age and education background", "Their income", "Their hobbies"], answer: "b" },
+    { question: "Which type of message requires confidentiality?", options: ["Public announcements", "Confidential messages", "General notices", "Marketing emails"], answer: "b" },
+    { question: "What is the richest communication medium per the Encyclopedia of Business?", options: ["Email", "Face-to-face communication", "Letters", "Videoconferences"], answer: "b" },
+
+    // Information and Non-Verbal Advantages
+    { question: "Which is a way we get information according to the text?", options: ["Writing", "Listening", "Dancing", "Sleeping"], answer: "b" },
+    { question: "What is the second main way of getting information mentioned?", options: ["Speaking", "Reading", "Observing", "Writing"], answer: "b" },
+    { question: "How can nonverbal communication be more influential?", options: ["Through immediate feedback", "Through actions and gestures", "Through written records", "Through loud speech"], answer: "b" },
+    { question: "What is a disadvantage of nonverbal communication?", options: ["It is immediate", "Long conversations are not possible", "It is universally understood", "It requires no effort"], answer: "b" },
+
+    // Rituals and Immediacy Behaviors
+    { question: "Which is a ritual in nonverbal communication?", options: ["Smiling", "Greetings", "Frowning", "Touching"], answer: "b" },
+    { question: "What does a high five typically communicate?", options: ["Sadness", "Celebration or congratulations", "Anger", "Disapproval"], answer: "b" },
+    { question: "Which behavior is part of immediacy behaviors?", options: ["Frowning", "Touching", "Avoiding eye contact", "Shaking hands"], answer: "b" },
+    { question: "What does a pat on the shoulder indicate?", options: ["Rejection", "Encouragement or support", "Anger", "Disinterest"], answer: "b" },
+
+    // Communication Types and Decoding
+    { question: "Which characteristic defines formal communication?", options: ["Casual language", "Follows organizational rules", "Uses slang", "Is impromptu"], answer: "b" },
+    { question: "Which communication type maintains relationships?", options: ["Informal", "Formal", "Vertical", "Horizontal"], answer: "a" },
+    { question: "What does decoding involve in the communication process?", options: ["Sending the message", "Translating the message into meaning", "Encoding the message", "Providing feedback"], answer: "b" },
+    { question: "Which factor influences media choice based on sender-receiver relationship?", options: ["Cost", "Confidentiality", "Reliability", "Relationship with the receiver"], answer: "d" },
+
+    // Obstacles and Non-Verbal Elements
+    { question: "What is a potential obstacle of selecting the wrong communication channel?", options: ["Increased feedback", "Information overload", "Faster delivery", "Better understanding"], answer: "b" },
+    { question: "Which is NOT a non-verbal element?", options: ["Proxemics", "Oculesics", "Written text", "Haptics"], answer: "c" },
+    { question: "What does a high-contact culture display?", options: ["Avoidance of touch", "Immediacy behaviors like touching", "Formal gestures", "Limited eye contact"], answer: "b" },
+    { question: "Which action can communicate without others hearing?", options: ["Speaking loudly", "Gesturing", "Writing notes", "Singing"], answer: "b" }, 
+    { question: "What is the first language skill a child acquires at birth?", options: ["Speaking", "Listening", "Reading", "Writing"], answer: "b" },
+    { question: "Which language skills are referred to as primary according to Barnlund (2008)?", options: ["Reading and writing", "Listening and speaking", "Writing and speaking", "Listening and reading"], answer: "b" },
+    { question: "What model of communication does Barnlund (2008) propose?", options: ["Linear model", "Transactional model", "Interactive model", "Circular model"], answer: "b" },
+    { question: "In the communication cycle, what follows the encoding of a message?", options: ["Decoding", "Channel", "Feedback", "Source"], answer: "b" },
+    { question: "What is a key purpose of communication according to the text?", options: ["To entertain", "To educate and give instruction", "To create conflict", "To ignore feedback"], answer: "b" },
+    { question: "Which barrier to communication is caused by physical maladies like deafness?", options: ["Environmental barrier", "Physiological-impairment barrier", "Syntactical barrier", "Organizational barrier"], answer: "b" },
+    { question: "What does noise refer to in the communication process?", options: ["Any occurrence that inhibits effective communication", "The sender's tone", "The receiver's feedback", "The medium's clarity"], answer: "a" },
+    { question: "According to Saleemi (1997), what should be avoided to ensure clarity in communication?", options: ["Jargon and ambiguity", "Short sentences", "Concrete words", "Familiar terms"], answer: "a" },
+    { question: "What is the main advantage of scanning as a reading skill?", options: ["To understand the full text", "To find specific details quickly", "To improve writing", "To enhance vocabulary"], answer: "b" },
+    { question: "What is the primary focus of skimming a text?", options: ["Detailed analysis", "Getting the gist or main idea", "Memorizing facts", "Learning new words"], answer: "b" },
+    { question: "What is a disadvantage of extensive reading?", options: ["It requires deep concentration", "It misses important details", "It is too slow", "It lacks enjoyment"], answer: "b" },
+    { question: "What type of reading is done with the utmost concern for the full meaning of a text?", options: ["Scanning", "Skimming", "Extensive reading", "Intensive reading"], answer: "d" },
+    { question: "What role does the receiver play in communication according to the text?", options: ["To encode the message", "To give full attention and provide feedback", "To create noise", "To ignore the sender"], answer: "b" },
+    { question: "Which characteristic of communication ensures all necessary facts are included?", options: ["Clarity", "Completeness", "Courtesy", "Correctness"], answer: "b" },
+    { question: "What can happen if a message lacks completeness according to Saleemi (1997)?", options: ["It enhances understanding", "It may lead to wrong actions", "It improves clarity", "It ensures courtesy"], answer: "b" }
+];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let userAnswers = [];
+        let time = 0;
+        let timerInterval;
+
+        const quizContainer = document.getElementById("quiz");
+        const prevButton = document.getElementById("prev");
+        const nextButton = document.getElementById("next");
+        const submitButton = document.getElementById("submit");
+        const resultDiv = document.getElementById("result");
+        const progress = document.querySelector(".progress");
+        const timeDisplay = document.getElementById("time");
+
+        // Airtable Configuration
+        const airtableBaseId = "appBA8BDAjCnEwbEb"; // Replace with your Airtable Base ID (e.g., "appXXXXXXXXXXXXXX")
+        const airtableTableName = "Quiz table";
+        const airtablePAT = "patcwZljMJW2c5hsB.4de15ac60a7791f322ba80c5a5fbb9135ac8c2663765c5e7073419f724eb31fe"; // Replace with your PAT (e.g., "patXXXXXXXXXXXXXX")
+
+        // Start Timer
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                time++;
+                let minutes = Math.floor(time / 60);
+                let seconds = time % 60;
+                timeDisplay.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+            }, 1000);
+        }
+
+        // Load Question
+        function loadQuestion() {
+            const q = quizData[currentQuestion];
+            quizContainer.innerHTML = `
+                <div class="question">${currentQuestion + 1}. ${q.question}</div>
+                <div class="options">
+                    ${q.options.map((option, index) => `
+                        <label>
+                            <input type="radio" name="q${currentQuestion}" value="${String.fromCharCode(97 + index)}" ${userAnswers[currentQuestion] === String.fromCharCode(97 + index) ? "checked" : ""}>
+                            ${option}
+                        </label>
+                    `).join("")}
+                </div>
+            `;
+            updateProgress();
+            prevButton.disabled = currentQuestion === 0;
+            nextButton.disabled = currentQuestion === quizData.length - 1;
+        }
+
+        // Update Progress Bar
+        function updateProgress() {
+            const percentage = ((currentQuestion + 1) / quizData.length) * 100;
+            progress.style.width = `${percentage}%`;
+        }
+
+        // Save Answer
+        function saveAnswer() {
+            const selected = document.querySelector(`input[name="q${currentQuestion}"]:checked`);
+            userAnswers[currentQuestion] = selected ? selected.value : null;
+        }
+
+        // Show Result with Improved Review
+        function showResult() {
+            clearInterval(timerInterval);
+            score = 0;
+            quizData.forEach((q, index) => {
+                if (userAnswers[index] === q.answer) score++;
+            });
+            quizContainer.innerHTML = "";
+            resultDiv.innerHTML = `
+                <div class="result-header">
+                    You scored ${score} out of ${quizData.length} (${Math.round((score / quizData.length) * 100)}%) in ${timeDisplay.textContent}
+                </div>
+                <table class="review-table">
+                    <thead>
+                        <tr>
+                            <th>Question</th>
+                            <th>Your Answer</th>
+                            <th>Correct Answer</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${quizData.map((q, i) => `
+                            <tr>
+                                <td>${i + 1}. ${q.question}</td>
+                                <td>${userAnswers[i] ? q.options[userAnswers[i].charCodeAt(0) - 97] : "Not answered"}</td>
+                                <td>${q.options[q.answer.charCodeAt(0) - 97]}</td>
+                                <td class="${userAnswers[i] === q.answer ? 'correct' : 'incorrect'}">
+                                    ${userAnswers[i] === q.answer ? "Correct" : "Incorrect"}
+                                </td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
+            `;
+            saveToServer();
+            prevButton.style.display = "none";
+            nextButton.style.display = "none";
+            submitButton.style.display = "none";
+        }
+
+        // Save Results to Airtable
+        function saveToServer() {
+            const data = {
+                fields: {
+                    UserID: "user123", // Replace with dynamic user ID logic if available
+                    QuizName: "African Studies Quiz",
+                    Score: score,
+                    Total: quizData.length,
+                    Time: time,
+                    Answers: JSON.stringify(userAnswers),
+                    Date: new Date().toISOString()
+                }
+            };
+
+            fetch(`https://api.airtable.com/v0/${airtableBaseId}/${airtableTableName}`, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${airtablePAT}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then(() => {
+                resultDiv.innerHTML += "<br><span class='correct'>Results saved successfully to Airtable!</span>";
+                console.log("Data saved to Airtable:", data);
+            })
+            .catch(error => {
+                resultDiv.innerHTML += "<br><span class='incorrect'>Error saving results to Airtable: " + error.message + "</span>";
+                console.error("Error saving to Airtable:", error);
+            });
+        }
+
+        // Event Listeners
+        prevButton.addEventListener("click", () => {
+            saveAnswer();
+            currentQuestion--;
+            loadQuestion();
+        });
+
+        nextButton.addEventListener("click", () => {
+            saveAnswer();
+            if (currentQuestion < quizData.length - 1) {
+                currentQuestion++;
+                loadQuestion();
+            }
+        });
+
+        submitButton.addEventListener("click", () => {
+            saveAnswer();
+            showResult();
+        });
+
+        // Initialize Quiz
+        startTimer();
+        loadQuestion();
+    </script>
+</body>
+</html>

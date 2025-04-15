@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoakUp - African Studies Quiz</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #eef2f7;
+            margin: 0;
+            padding: 0px;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            width: 95%;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #1a202c;
+            margin-bottom: 20px;
+        }
+        .progress-bar {
+            width: 100%;
+            background: #e2e8f0;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            background: #48bb78;
+            width: 0%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        .timer {
+            text-align: right;
+            font-size: 16px;
+            color: #4a5568;
+            margin-bottom: 20px;
+        }
+        .question {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2d3748;
+        }
+        .options label {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #f7fafc;
+            margin: 8px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        .options label:hover {
+            background: #edf2f7;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        input[type="radio"] {
+            margin-right: 12px;
+            accent-color: #3182ce;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+            gap: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.1s;
+        }
+        button:hover {
+            transform: translateY(-1px);
+        }
+        button:disabled {
+            background: #e2e8f0;
+            color: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+        }
+        #prev {
+            background: #718096;
+            color: #fff;
+        }
+        #prev:hover:not(:disabled) {
+            background: #5a6270;
+        }
+        #next {
+            background: #3182ce;
+            color: #fff;
+        }
+        #next:hover:not(:disabled) {
+            background: #2b6cb0;
+        }
+        #submit {
+            background: #e53e3e;
+            color: #fff;
+        }
+        #submit:hover:not(:disabled) {
+            background: #c53030;
+        }
+        #result {
+            margin-top: 30px;
+            font-size: 3px; /* Corrected from 3px to 18px */
+            color: #2d3748;
+        }
+        .result-header {
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+        .review-table {
+            width: 100%; /* Corrected from 100px to 100% */
+            border-collapse: collapse;
+            margin-top: 20px;
+            margin: auto;
+        }
+        .review-table th, .review-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+            word-wrap: break-word;
+            max-width: 200px; /* Added to prevent overflow */
+        }
+        .review-table th {
+            background: #edf2f7;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        .correct {
+            color: #48bb78;
+            font-weight: 500;
+        }
+        .incorrect {
+            color: #e53e3e;
+            font-weight: 500;
+        }
+        .correct-answer {
+            color: #48bb78;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Communication skills (Reading)</h1>
+        <div class="progress-bar">
+            <div class="progress"></div>
+        </div>
+        <div class="timer">Time: <span id="time">00:00</span></div>
+        <div id="quiz"></div>
+        <div class="buttons">
+            <button id="prev" disabled>Previous</button>
+            <button id="submit">Submit</button>
+            <button id="next">Next</button>
+        </div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+   const quizData = [
+    // Reading Skills Questions
+    { question: "What is the primary purpose of scanning as a reading skill?", options: ["To understand the full text", "To find specific details quickly", "To improve writing", "To enhance vocabulary"], answer: "b" },
+    { question: "What is the main focus of skimming a text?", options: ["Detailed analysis", "Getting the gist or main idea", "Memorizing facts", "Learning new words"], answer: "b" },
+    { question: "What is a disadvantage of extensive reading?", options: ["It requires deep concentration", "It misses important details", "It is too slow", "It lacks enjoyment"], answer: "b" },
+    { question: "Which type of reading is done with the utmost concern for the full meaning of a text?", options: ["Scanning", "Skimming", "Extensive reading", "Intensive reading"], answer: "d" },
+    { question: "What is the speed of skimming compared to normal reading speed?", options: ["Half the normal speed", "Three to four times faster than normal reading speed", "The same as normal reading speed", "Slightly slower than normal reading speed"], answer: "b" },
+    { question: "What does extensive reading aim to build in learners?", options: ["Detailed knowledge", "Reader confidence and enjoyment", "Specific vocabulary", "Critical analysis skills"], answer: "b" },
+    { question: "What is a key advantage of extensive reading?", options: ["It introduces students to specific details", "It widens the vocabulary repertoire of students", "It focuses on intensive comprehension", "It requires minimal effort"], answer: "b" },
+    { question: "What type of reading is identified as occurring when students read large amounts of high-interest material?", options: ["Scanning", "Skimming", "Extensive reading", "Intensive reading"], answer: "c" },
+    { question: "What is the purpose of intensive reading?", options: ["To get the gist of the text", "To understand the full meaning with utmost concern for details", "To quickly find specific information", "To enjoy the text"], answer: "b" },
+    { question: "What does the SQ3R technique stand for?", options: ["Survey, Question, Read, Recall, Revise", "Study, Query, Read, Review, Recollect", "Scan, Question, Read, Recall, Revise", "Survey, Query, Read, Review, Recollect"], answer: "a" },
+    { question: "What is the first stage of the SQ3R technique?", options: ["Question", "Survey", "Read", "Recall"], answer: "b" },
+    { question: "What should be done during the survey stage of SQ3R?", options: ["Read the entire book", "Skim through the book to get an overall view", "Answer all questions", "Memorize key details"], answer: "b" },
+    { question: "What is the purpose of knowing the author of a book in the SQ3R survey stage?", options: ["To determine the book's length", "To assess the author's qualifications and expertise", "To skip the introduction", "To check the edition"], answer: "b" },
+    { question: "What does the year of publication help determine in the SQ3R survey stage?", options: ["The book's popularity", "Whether the book is current or dated", "The author's credibility", "The number of pages"], answer: "b" },
+    { question: "What is the role of the title of the book in the SQ3R survey stage?", options: ["To summarize its content", "To indicate the author's name", "To list all chapters", "To provide a detailed overview"], answer: "a" },
+    { question: "Which reading skill is most effective for locating specific dates or names in a text?", options: ["Skimming", "Scanning", "Extensive reading", "Intensive reading"], answer: "b" },
+    { question: "What technique is recommended to extract specific details without reading the entire text?", options: ["Skimming", "Scanning", "Extensive reading", "Intensive reading"], answer: "b" },
+    { question: "How does skimming help learners interpret text faster?", options: ["By focusing on every word", "By identifying key ideas quickly", "By memorizing details", "By reading slowly"], answer: "b" },
+    { question: "What is a potential benefit of practicing skimming regularly?", options: ["Improved writing skills", "Enhanced ability to anticipate meanings", "Increased reading speed only", "Better memory retention"], answer: "b" },
+    { question: "Which reading skill is best suited for enjoying a novel?", options: ["Scanning", "Skimming", "Extensive reading", "Intensive reading"], answer: "c" },
+    { question: "What is a common challenge of extensive reading for students?", options: ["Lack of interest", "Missing critical details due to superficial reading", "Difficulty in skimming", "Overemphasis on vocabulary"], answer: "b" },
+    { question: "How can intensive reading support academic success?", options: ["By providing a quick overview", "By ensuring deep comprehension of complex texts", "By skipping unnecessary details", "By focusing on enjoyment"], answer: "b" },
+    { question: "What should a student do during the 'Question' stage of SQ3R?", options: ["Read the entire chapter", "Form questions based on the survey", "Write a summary", "Memorize key terms"], answer: "b" },
+    { question: "What is the purpose of the 'Read' stage in the SQ3R technique?", options: ["To skim the text", "To actively process information and answer questions", "To recall details", "To revise notes"], answer: "b" },
+    { question: "During the 'Recall' stage of SQ3R, what should a student focus on?", options: ["Summarizing key points without looking at the text", "Rereading the entire book", "Answering new questions", "Skipping difficult sections"], answer: "a" },
+    { question: "What is the final stage of the SQ3R technique?", options: ["Survey", "Question", "Revise", "Read"], answer: "c" },
+    { question: "How can revising in SQ3R improve retention of material?", options: ["By reviewing notes and reinforcing understanding", "By skimming again", "By ignoring feedback", "By reading faster"], answer: "a" },
+    { question: "Which reading skill requires the least amount of time for large texts?", options: ["Intensive reading", "Extensive reading", "Skimming", "Scanning"], answer: "c" },
+    { question: "What is a key characteristic of scanning that distinguishes it from skimming?", options: ["Focus on main ideas", "Targeted search for specific information", "Reading every word", "General overview"], answer: "b" },
+    { question: "How does extensive reading differ from intensive reading in terms of depth?", options: ["Extensive is deeper", "Intensive is deeper", "Both are equally deep", "Neither requires depth"], answer: "b" },
+    { question: "What is a practical application of skimming in academic settings?", options: ["Writing essays", "Previewing a textbook before a lecture", "Memorizing facts", "Detailed note-taking"], answer: "b" },
+    { question: "Which reading skill is most appropriate for preparing for an exam on a specific topic?", options: ["Scanning", "Skimming", "Intensive reading", "Extensive reading"], answer: "c" },
+    { question: "What might happen if a student over-relies on scanning during study?", options: ["Miss the overall context", "Gain comprehensive understanding", "Improve vocabulary", "Enhance critical thinking"], answer: "a" },
+    { question: "How can the SQ3R technique be adapted for group study?", options: ["By skipping the survey stage", "By assigning different stages to group members", "By focusing only on reading", "By avoiding questions"], answer: "b" },
+    { question: "What is a potential limitation of the SQ3R method for short texts?", options: ["Too time-consuming", "Ineffective for quick reviews", "Requires extensive reading", "Lacks structure"], answer: "a" },
+    { question: "Which stage of SQ3R is most critical for active engagement with the text?", options: ["Survey", "Question", "Read", "Recall"], answer: "c" },
+    { question: "How does intensive reading support critical analysis?", options: ["By providing a quick overview", "By allowing detailed examination of arguments", "By skipping complex sections", "By focusing on enjoyment"], answer: "b" },
+    { question: "What is a strategy to improve scanning efficiency?", options: ["Reading every word", "Using keywords and visual cues", "Skimming the entire text", "Memorizing the content"], answer: "b" },
+
+  
+    // Application and Critical Thinking Questions
+    { question: "Which reading skill would be most appropriate to use when looking for specific dates in a text?", options: ["Skimming", "Scanning", "Extensive reading", "Intensive reading"], answer: "b" },
+    { question: "Which reading skill is best for understanding the main idea of a chapter quickly?", options: ["Scanning", "Skimming", "Extensive reading", "Intensive reading"], answer: "b" },
+    { question: "What should a student do if they miss important details during extensive reading?", options: ["Reread using intensive reading", "Skip the text", "Continue skimming", "Ignore the details"], answer: "a" },
+    { question: "How can the SQ3R technique improve study efficiency?", options: ["By skipping the survey stage", "By providing a structured approach to reading", "By focusing only on questions", "By avoiding recall"], answer: "b" },
+    { question: "How can skimming help in academic reading?", options: ["By providing deep analysis", "By allowing quick identification of key ideas", "By enhancing vocabulary", "By replacing intensive reading"], answer: "b" },
+    { question: "What is the best approach to verify the accuracy of information in a text?", options: ["Skim through it", "Consult multiple sources", "Read it once", "Ignore conflicting data"], answer: "b" }, 
+{ question: "What is the primary purpose of using prior knowledge when previewing a text?", options: ["To memorize the text", "To provide a framework for new information", "To skip difficult sections", "To summarize the text"], answer: "b" },
+    { question: "What does predicting involve when reading a text?", options: ["Memorizing vocabulary", "Setting expectations based on prior knowledge", "Ignoring the text's structure", "Summarizing the main idea"], answer: "b" },
+    { question: "What is a key step in identifying the main idea of a text?", options: ["Reading every word slowly", "Determining what is important and putting it in your own words", "Skipping the introduction", "Focusing only on the conclusion"], answer: "b" },
+    { question: "What does implicit comprehension involve when identifying the main idea?", options: ["Understanding the author's purpose", "Memorizing the text", "Reading the text aloud", "Ignoring the author's intent"], answer: "a" },
+    { question: "How does questioning help students engage with a text?", options: ["By encouraging them to skip sections", "By helping them focus on the meaning of the text", "By reducing comprehension", "By memorizing facts"], answer: "b" },
+    { question: "What is the role of teachers in the questioning strategy?", options: ["To summarize the text", "To model asking good questions and finding answers", "To read the text aloud", "To skip difficult sections"], answer: "b" },
+    { question: "What must students do to make inferences while reading?", options: ["Memorize the text", "Recognize clues and draw on prior knowledge", "Focus only on the title", "Skip unfamiliar words"], answer: "b" },
+    { question: "According to the text, what is a benefit of visualizing while reading?", options: ["It reduces comprehension", "It improves recall of the text", "It helps skip difficult sections", "It focuses on grammar"], answer: "b" },
+    { question: "What does the text suggest about competent readers?", options: ["They avoid interaction with the text", "They integrate new information with prior knowledge", "They skip pre-reading activities", "They focus only on vocabulary"], answer: "b" },
+    { question: "What type of knowledge is NOT mentioned as being used by readers during comprehension?", options: ["Knowledge of letters and sound correspondences", "Knowledge of syntax", "Knowledge of historical events", "Knowledge of meanings and semantic relations"], answer: "c" },
+    { question: "What is the first step a competent reader takes before reading a text?", options: ["Summarizes the text", "Previews the text by looking at the title and pictures", "Reads the conclusion", "Memorizes vocabulary"], answer: "b" },
+    { question: "What does the text recommend for building background knowledge before reading?", options: ["Skipping the text", "Self-questioning about what is known about the topic", "Focusing only on the format", "Ignoring prior knowledge"], answer: "b" },
+    { question: "What does the SQ3R Recite stage involve?", options: ["Reading the text aloud", "Trying to recall the text mentally or orally", "Skipping the text", "Writing a summary"], answer: "b" },
+    { question: "What is the purpose of the Review stage in SQ3R according to the text?", options: ["To memorize the text", "To master information by revising notes", "To skip difficult sections", "To read the text faster"], answer: "b" },
+    { question: "What is a suggested strategy for students struggling with difficult topics?", options: ["Skipping the topic", "Seeking help from lecturers or colleagues", "Ignoring the topic", "Memorizing the text"], answer: "b" },
+    { question: "What does the text suggest about the role of practice in comprehension?", options: ["It is unnecessary", "It helps students master comprehension strategies", "It reduces understanding", "It focuses only on vocabulary"], answer: "b" },
+]; 
+        let currentQuestion = 0;
+        let score = 0;
+        let userAnswers = [];
+        let time = 0;
+        let timerInterval;
+
+        const quizContainer = document.getElementById("quiz");
+        const prevButton = document.getElementById("prev");
+        const nextButton = document.getElementById("next");
+        const submitButton = document.getElementById("submit");
+        const resultDiv = document.getElementById("result");
+        const progress = document.querySelector(".progress");
+        const timeDisplay = document.getElementById("time");
+
+        // Airtable Configuration
+        const airtableBaseId = "appBA8BDAjCnEwbEb"; 
+        const airtableTableName = "Quiz table";
+        const airtablePAT = "patcwZljMJW2c5hsB.4de15ac60a7791f322ba80c5a5fbb9135ac8c2663765c5e7073419f724eb31fe";
+
+        // Start Timer
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                time++;
+                let minutes = Math.floor(time / 60);
+                let seconds = time % 60;
+                timeDisplay.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+            }, 1000);
+        }
+
+        // Load Question
+        function loadQuestion() {
+            const q = quizData[currentQuestion];
+            quizContainer.innerHTML = `
+                <div class="question">${currentQuestion + 1}. ${q.question}</div>
+                <div class="options">
+                    ${q.options.map((option, index) => `
+                        <label>
+                            <input type="radio" name="q${currentQuestion}" value="${String.fromCharCode(97 + index)}" ${userAnswers[currentQuestion] === String.fromCharCode(97 + index) ? "checked" : ""}>
+                            ${option}
+                        </label>
+                    `).join("")}
+                </div>
+            `;
+            updateProgress();
+            prevButton.disabled = currentQuestion === 0;
+            nextButton.disabled = currentQuestion === quizData.length - 1;
+        }
+
+        // Update Progress Bar
+        function updateProgress() {
+            const percentage = ((currentQuestion + 1) / quizData.length) * 100;
+            progress.style.width = `${percentage}%`;
+        }
+
+        // Save Answer
+        function saveAnswer() {
+            const selected = document.querySelector(`input[name="q${currentQuestion}"]:checked`);
+            userAnswers[currentQuestion] = selected ? selected.value : null;
+        }
+
+        // Show Result with Improved Review
+        function showResult() {
+            clearInterval(timerInterval);
+            score = 0;
+            quizData.forEach((q, index) => {
+                if (userAnswers[index] === q.answer) score++;
+            });
+            quizContainer.innerHTML = "";
+            resultDiv.innerHTML = `
+                <div class="result-header">
+                    You scored ${score} out of ${quizData.length} (${Math.round((score / quizData.length) * 100)}%) in ${timeDisplay.textContent}
+                </div>
+                <table class="review-table">
+                    <thead>
+                        <tr>
+                            <th>Question</th>
+                            <th>Your Answer</th>
+                            <th>Correct Answer</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${quizData.map((q, i) => `
+                            <tr>
+                                <td>${i + 1}. ${q.question}</td>
+                                <td>${userAnswers[i] ? q.options[userAnswers[i].charCodeAt(0) - 97] : "Not answered"}</td>
+                                <td>${q.options[q.answer.charCodeAt(0) - 97]}</td>
+                                <td class="${userAnswers[i] === q.answer ? 'correct' : 'incorrect'}">
+                                    ${userAnswers[i] === q.answer ? "Correct" : "Incorrect"}
+                                </td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
+            `;
+            saveToServer();
+            prevButton.style.display = "none";
+            nextButton.style.display = "none";
+            submitButton.style.display = "none";
+        }
+
+        // Save Results to Airtable
+        function saveToServer() {
+            const data = {
+                fields: {
+                    UserID: "user123", // Replace with dynamic user ID logic if available
+                    QuizName: "African Studies Quiz",
+                    Score: score,
+                    Total: quizData.length,
+                    Time: time,
+                    Answers: JSON.stringify(userAnswers),
+                    Date: new Date().toISOString()
+                }
+            };
+
+            fetch(`https://api.airtable.com/v0/${airtableBaseId}/${airtableTableName}`, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${airtablePAT}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then(() => {
+                resultDiv.innerHTML += "<br><span class='correct'>Results saved successfully to Airtable!</span>";
+                console.log("Data saved to Airtable:", data);
+            })
+            .catch(error => {
+                resultDiv.innerHTML += "<br><span class='incorrect'>Error saving results to Airtable: " + error.message + "</span>";
+                console.error("Error saving to Airtable:", error);
+            });
+        }
+
+        // Event Listeners
+        prevButton.addEventListener("click", () => {
+            saveAnswer();
+            currentQuestion--;
+            loadQuestion();
+        });
+
+        nextButton.addEventListener("click", () => {
+            saveAnswer();
+            if (currentQuestion < quizData.length - 1) {
+                currentQuestion++;
+                loadQuestion();
+            }
+        });
+
+        submitButton.addEventListener("click", () => {
+            saveAnswer();
+            showResult();
+        });
+
+        // Initialize Quiz
+        startTimer();
+        loadQuestion();
+    </script>
+</body>
+</html>

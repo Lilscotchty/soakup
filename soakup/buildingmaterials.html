@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoakUp - African Studies Quiz</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #eef2f7;
+            margin: 0;
+            padding: 20px;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            width: 95%;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #1a202c;
+            margin-bottom: 20px;
+        }
+        .progress-bar {
+            width: 100%;
+            background: #e2e8f0;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            background: #48bb78;
+            width: 0%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        .timer {
+            text-align: right;
+            font-size: 16px;
+            color: #4a5568;
+            margin-bottom: 20px;
+        }
+        .question {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2d3748;
+        }
+        .options label {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #f7fafc;
+            margin: 8px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        .options label:hover {
+            background: #edf2f7;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        input[type="radio"] {
+            margin-right: 12px;
+            accent-color: #3182ce;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+            gap: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.1s;
+        }
+        button:hover {
+            transform: translateY(-1px);
+        }
+        button:disabled {
+            background: #e2e8f0;
+            color: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+        }
+        #prev {
+            background: #718096;
+            color: #fff;
+        }
+        #prev:hover:not(:disabled) {
+            background: #5a6270;
+        }
+        #next {
+            background: #3182ce;
+            color: #fff;
+        }
+        #next:hover:not(:disabled) {
+            background: #2b6cb0;
+        }
+        #submit {
+            background: #e53e3e;
+            color: #fff;
+        }
+        #submit:hover:not(:disabled) {
+            background: #c53030;
+        }
+        #result {
+            margin-top: 30px;
+            font-size: 3px; /* Corrected from 3px to 18px */
+            color: #2d3748;
+        }
+        .result-header {
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+        .review-table {
+            width: 100%; /* Corrected from 100px to 100% */
+            border-collapse: collapse;
+            margin-top: 20px;
+            margin: auto;
+        }
+        .review-table th, .review-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+            word-wrap: break-word;
+            max-width: 200px; /* Added to prevent overflow */
+        }
+        .review-table th {
+            background: #edf2f7;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        .correct {
+            color: #48bb78;
+            font-weight: 500;
+        }
+        .incorrect {
+            color: #e53e3e;
+            font-weight: 500;
+        }
+        .correct-answer {
+            color: #48bb78;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SoakUp - African Studies Quiz</h1>
+        <div class="progress-bar">
+            <div class="progress"></div>
+        </div>
+        <div class="timer">Time: <span id="time">00:00</span></div>
+        <div id="quiz"></div>
+        <div class="buttons">
+            <button id="prev" disabled>Previous</button>
+            <button id="submit">Submit</button>
+            <button id="next">Next</button>
+        </div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const quizData = [
+    // Original 30 questions on African independence
+  
+    // New 60 questions on Timber Selection and Uses
+    { question: "What is one of the primary uses of timber in construction?", options: ["As a fuel source", "For structural elements like beams and rafters", "For electrical wiring", "As a decorative paint"], answer: "b" },
+    { question: "Which of the following is NOT a property to consider when selecting timber?", options: ["Timber type", "Appearance", "Density", "Electrical conductivity"], answer: "d" },
+    { question: "What does the term 'neo-colonialism' refer to in the context of timber?", options: ["A new type of timber", "Economic control by former colonial powers", "A method of timber preservation", "A type of timber defect"], answer: "b" },
+    { question: "Which timber is known for its pale yellow to golden color and eco-friendly properties?", options: ["Oak", "Mahogany", "Bamboo", "Walnut"], answer: "c" },
+    { question: "Timber is often preferred in construction because it is:", options: ["Difficult to join", "Easily available everywhere", "Not durable", "Heavy and hard to transport"], answer: "b" },
+    { question: "The Organization of African Unity (OAU) aimed to promote African unity, but in the context of timber, what is a key factor for its selection?", options: ["Political stability", "Sustainable sourcing", "Colonial history", "Ethnic diversity"], answer: "b" },
+    { question: "Which of the following is a disadvantage of using oak timber?", options: ["It is lightweight", "It is challenging to treat for acid content", "It is not durable", "It cannot be glued"], answer: "b" },
+    { question: "What is a major advantage of using timber in marine works?", options: ["It corrodes easily", "It does not corrode in seawater if protected", "It is not strong", "It is not workable"], answer: "b" },
+    { question: "Which timber is considered a top-tier choice for furniture due to its stability and deep color?", options: ["Bamboo", "Oak", "Mahogany", "Plywood"], answer: "c" },
+    { question: "What global event influenced the availability of timber resources in the 20th century?", options: ["The Industrial Revolution", "World War II", "The Cold War", "The Berlin Conference"], answer: "b" },
+    { question: "Which timber is known for its decorative grain and is suitable for fine woodworking?", options: ["Bamboo", "Walnut", "Oak", "Plywood"], answer: "b" },
+    { question: "Only two types of timber are suitable for construction, true or false?", options: ["True", "False"], answer: "b" },
+    { question: "The high cost of walnut timber is due to its:", options: ["Low durability", "Decorative grain and dimensional stability", "Ease of availability", "Lack of strength"], answer: "b" },
+    { question: "A key figure in timber selection would focus on:", options: ["Political leadership", "Properties like durability and workability", "Cultural unity", "Economic self-sufficiency"], answer: "b" },
+    { question: "The use of timber in construction often leads to:", options: ["Economic self-sufficiency", "Ease of transportation due to smaller pieces", "Cultural unity", "Strengthened traditional authority"], answer: "b" },
+    { question: "How many layers are typically found in 3-ply plywood?", options: ["2", "3", "5", "7"], answer: "b" },
+    { question: "Timber is the ___ material to be widely used in construction globally?", options: ["1st", "2nd", "3rd", "4th"], answer: "b" },
+    { question: "Which timber is primarily used for light construction and wine barrel production?", options: ["Mahogany", "Bamboo", "Oak", "Walnut"], answer: "c" },
+    { question: "The term 'wane' in timber refers to:", options: ["A type of fungus", "A defect on one or more faces of the bark", "A method of stacking", "A type of plywood"], answer: "b" },
+    { question: "The selection of timber for a project should consider which colonial power's influence?", options: ["Britain", "France", "The timber's properties, not colonial influence", "Portugal"], answer: "c" },
+    { question: "Sustainable sourcing of timber is crucial for environmental impact, true or false?", options: ["True", "False"], answer: "a" },
+    { question: "Traditional methods of timber selection always prioritize modern machinery, true or false?", options: ["True", "False"], answer: "b" },
+    { question: "The use of timber eliminates all forms of environmental impact, true or false?", options: ["True", "False"], answer: "b" },
+    { question: "Global events like World War II had no impact on timber availability, true or false?", options: ["True", "False"], answer: "b" },
+    { question: "The durability of timber is a key factor in its selection, true or false?", options: ["True", "False"], answer: "a" },
+    { question: "Bamboo is considered a sustainable timber due to its fast growth, true or false?", options: ["True", "False"], answer: "a" },
+    { question: "Post-construction timber refers to timber used before the project begins, true or false?", options: ["True", "False"], answer: "b" },
+    { question: "The selection of timber is often based on its aesthetic appeal rather than durability, true or false?", options: ["True", "False"], answer: "b" },
+    { question: "The stacking of timber to reduce air circulation is recommended, true or false?", options: ["True", "False"], answer: "b" },
+    { question: "Defects in timber like checks and shakes can affect its strength, true or false?", options: ["True", "False"], answer: "a" },
+    { question: "What is a key advantage of using timber in earthquake-prone regions?", options: ["It is heavy and rigid", "It is lightweight and flexible", "It corrodes easily", "It is not durable"], answer: "b" },
+    { question: "Which of the following is a defect caused by seasoning in timber?", options: ["Wane", "Checks", "Knots", "Blue stain"], answer: "b" },
+    { question: "What type of timber is known for its high tensile strength and resistance to warping?", options: ["Bamboo", "Oak", "Mahogany", "Plywood"], answer: "c" },
+    { question: "Which property of timber makes it suitable for musical instruments?", options: ["High density", "Good sound absorption", "Low durability", "High moisture content"], answer: "b" },
+    { question: "What is a disadvantage of using plywood compared to solid timber?", options: ["It is more durable", "Edges are difficult to work across the grain", "It is heavier", "It is less flexible"], answer: "b" },
+    { question: "Which timber defect is caused by the growth of sapwood over wounds?", options: ["Ringall", "Wane", "Checks", "Knots"], answer: "a" },
+    { question: "What is the primary cause of 'blue stain' in timber?", options: ["Bacterial attack", "Fungal attack on sugars and starch", "Insect attack", "Physical damage"], answer: "b" },
+    { question: "Which of the following is a mechanical property of timber?", options: ["Appearance", "Tensile strength", "Moisture content", "Cost"], answer: "b" },
+    { question: "What is a key factor in preventing fungal attack on timber?", options: ["Increasing moisture content", "Keeping timber dry", "Exposing to direct sunlight", "Using soft timber"], answer: "b" },
+    { question: "Which timber is susceptible to insect attacks and has a higher cost due to its domestic species?", options: ["Bamboo", "Oak", "Mahogany", "Walnut"], answer: "d" },
+    { question: "What is the standard size of a plywood sheet mentioned in the content?", options: ["1.2 m x 2.4 m", "2.4 m x 1.2 m", , "3 m x 1.5 m", "2 m x 2 m"], answer: "b" },
+    { question: "Which of the following is an advantage of using plywood?", options: ["It is heavier than solid timber", "It requires seasoning", "It is available in bigger dimensions", "It is less durable"], answer: "c" },
+    { question: "What type of defect is 'cupping' in timber?", options: ["A defect due to conversion", "A defect due to seasoning", "A defect due to fungal attack", "A defect due to insect attack"], answer: "b" },
+    { question: "Which timber is noted for its fast growth and high yield?", options: ["Mahogany", "Oak", "Bamboo", "Walnut"], answer: "c" },
+    { question: "What is a key characteristic of a good timber according to the content?", options: ["It should be soft and flexible", "It should be hard and durable", "It should be lightweight and brittle", "It should have high moisture content"], answer: "b" },
+    { question: "Which of the following is a disadvantage of mahogany timber?", options: ["It is not durable", "It can cause skin and respiratory irritation", "It is not workable", "It is lightweight"], answer: "b" },
+    { question: "What is the primary purpose of stacking timber in a specific way?", options: ["To increase moisture content", "To allow air circulation and slow seasoning", "To prevent air circulation", "To make it heavier"], answer: "b" },
+    { question: "Which defect in timber is caused by the crushing of fibers during tree growth?", options: ["Upset", "Twisted fibers", "End splits", "Ringall"], answer: "a" },
+    { question: "What is a key advantage of using timber for internal decorations?", options: ["It is heavy and rigid", "It is an excellent material for decorative use", "It corrodes easily", "It is not durable"], answer: "b" },
+    { question: "Which of the following is a type of fungal attack on timber?", options: ["White rot", "End splits", "Knots", "Wane"], answer: "a" },
+    { question: "What is a key characteristic of timber that makes it suitable for furniture?", options: ["High moisture content", "Good insulation of electricity and heat", "Low durability", "High weight"], answer: "b" },
+    { question: "Which timber defect is characterized by radial splits or cracks?", options: ["Checks", "Star shakes", "Knots", "Wane"], answer: "b" },
+    { question: "What is a key disadvantage of bamboo timber?", options: ["It is not durable", "It is susceptible to insect attacks", "It is not workable", "It is heavy"], answer: "b" },
+    { question: "Which of the following is a mechanical property of timber that affects its design?", options: ["Appearance", "Bending strength", "Moisture content", "Cost"], answer: "b" },
+    { question: "What is a key factor in the selection of timber for marine works?", options: ["High moisture content", "Resistance to corrosion in seawater", "Low durability", "High weight"], answer: "b" },
+    { question: "Which timber is noted for its use in turning, carving, and steam bending?", options: ["Bamboo", "Oak", "Mahogany", "Walnut"], answer: "d" },
+    { question: "What is a key advantage of using timber in construction?", options: ["It is difficult to join", "It can be easily joined", "It is not durable", "It is heavy"], answer: "b" },
+    { question: "Which of the following is a defect due to the conversion of timber?", options: ["Wane", "Checks", "Knots", "Blue stain"], answer: "a" },
+    { question: "What is a key characteristic of timber that makes it suitable for light construction?", options: ["High weight", "Low durability", "Ease of gluing and nailing", "High moisture content"], answer: "c" },
+    { question: "Which of the following is a type of timber product mentioned in the content?", options: ["Concrete", "Plywood", "Steel", "Plastic"], answer: "b" },
+    { question: "What is a key disadvantage of using timber in external applications?", options: ["It is durable", "It is susceptible to weathering", "It is lightweight", "It is easy to work"], answer: "b" },
+    { question: "Which of the following is a type of insect that attacks timber?", options: ["Beetles", "Flies", "Mosquitoes", "Butterflies"], answer: "a" },
+    { question: "What is a key characteristic of timber that makes it suitable for sound absorption?", options: ["High density", "Good sound absorption material", "Low durability", "High moisture content"], answer: "b" },
+    { question: "Which of the following is a defect due to the felling of a tree?", options: ["Bowing", "Checks", "Knots", "Wane"], answer: "a" },
+    { question: "What is a key advantage of using timber in construction over iron and concrete?", options: ["It is heavier", "It withstands shocks better", "It is less durable", "It is not workable"], answer: "b" },
+    { question: "Which of the following is a type of timber defect caused by fungal attack?", options: ["White rot", "End splits", "Knots", "Wane"], answer: "a" }
+];
+        let currentQuestion = 0;
+        let score = 0;
+        let userAnswers = [];
+        let time = 0;
+        let timerInterval;
+
+        const quizContainer = document.getElementById("quiz");
+        const prevButton = document.getElementById("prev");
+        const nextButton = document.getElementById("next");
+        const submitButton = document.getElementById("submit");
+        const resultDiv = document.getElementById("result");
+        const progress = document.querySelector(".progress");
+        const timeDisplay = document.getElementById("time");
+
+        // Airtable Configuration
+        const airtableBaseId = "appBA8BDAjCnEwbEb"; // Replace with your Airtable Base ID (e.g., "appXXXXXXXXXXXXXX")
+        const airtableTableName = "Quiz table";
+        const airtablePAT = "patcwZljMJW2c5hsB.4de15ac60a7791f322ba80c5a5fbb9135ac8c2663765c5e7073419f724eb31fe"; // Replace with your PAT (e.g., "patXXXXXXXXXXXXXX")
+
+        // Start Timer
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                time++;
+                let minutes = Math.floor(time / 60);
+                let seconds = time % 60;
+                timeDisplay.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+            }, 1000);
+        }
+
+        // Load Question
+        function loadQuestion() {
+            const q = quizData[currentQuestion];
+            quizContainer.innerHTML = `
+                <div class="question">${currentQuestion + 1}. ${q.question}</div>
+                <div class="options">
+                    ${q.options.map((option, index) => `
+                        <label>
+                            <input type="radio" name="q${currentQuestion}" value="${String.fromCharCode(97 + index)}" ${userAnswers[currentQuestion] === String.fromCharCode(97 + index) ? "checked" : ""}>
+                            ${option}
+                        </label>
+                    `).join("")}
+                </div>
+            `;
+            updateProgress();
+            prevButton.disabled = currentQuestion === 0;
+            nextButton.disabled = currentQuestion === quizData.length - 1;
+        }
+
+        // Update Progress Bar
+        function updateProgress() {
+            const percentage = ((currentQuestion + 1) / quizData.length) * 100;
+            progress.style.width = `${percentage}%`;
+        }
+
+        // Save Answer
+        function saveAnswer() {
+            const selected = document.querySelector(`input[name="q${currentQuestion}"]:checked`);
+            userAnswers[currentQuestion] = selected ? selected.value : null;
+        }
+
+        // Show Result with Improved Review
+        function showResult() {
+            clearInterval(timerInterval);
+            score = 0;
+            quizData.forEach((q, index) => {
+                if (userAnswers[index] === q.answer) score++;
+            });
+            quizContainer.innerHTML = "";
+            resultDiv.innerHTML = `
+                <div class="result-header">
+                    You scored ${score} out of ${quizData.length} (${Math.round((score / quizData.length) * 100)}%) in ${timeDisplay.textContent}
+                </div>
+                <table class="review-table">
+                    <thead>
+                        <tr>
+                            <th>Question</th>
+                            <th>Your Answer</th>
+                            <th>Correct Answer</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${quizData.map((q, i) => `
+                            <tr>
+                                <td>${i + 1}. ${q.question}</td>
+                                <td>${userAnswers[i] ? q.options[userAnswers[i].charCodeAt(0) - 97] : "Not answered"}</td>
+                                <td>${q.options[q.answer.charCodeAt(0) - 97]}</td>
+                                <td class="${userAnswers[i] === q.answer ? 'correct' : 'incorrect'}">
+                                    ${userAnswers[i] === q.answer ? "Correct" : "Incorrect"}
+                                </td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
+            `;
+            saveToServer();
+            prevButton.style.display = "none";
+            nextButton.style.display = "none";
+            submitButton.style.display = "none";
+        }
+
+        // Save Results to Airtable
+        function saveToServer() {
+            const data = {
+                fields: {
+                    UserID: "user123", // Replace with dynamic user ID logic if available
+                    QuizName: "African Studies Quiz",
+                    Score: score,
+                    Total: quizData.length,
+                    Time: time,
+                    Answers: JSON.stringify(userAnswers),
+                    Date: new Date().toISOString()
+                }
+            };
+
+            fetch(`https://api.airtable.com/v0/${airtableBaseId}/${airtableTableName}`, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${airtablePAT}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then(() => {
+                resultDiv.innerHTML += "<br><span class='correct'>Results saved successfully to Airtable!</span>";
+                console.log("Data saved to Airtable:", data);
+            })
+            .catch(error => {
+                resultDiv.innerHTML += "<br><span class='incorrect'>Error saving results to Airtable: " + error.message + "</span>";
+                console.error("Error saving to Airtable:", error);
+            });
+        }
+
+        // Event Listeners
+        prevButton.addEventListener("click", () => {
+            saveAnswer();
+            currentQuestion--;
+            loadQuestion();
+        });
+
+        nextButton.addEventListener("click", () => {
+            saveAnswer();
+            if (currentQuestion < quizData.length - 1) {
+                currentQuestion++;
+                loadQuestion();
+            }
+        });
+
+        submitButton.addEventListener("click", () => {
+            saveAnswer();
+            showResult();
+        });
+
+        // Initialize Quiz
+        startTimer();
+        loadQuestion();
+    </script>
+</body>
+</html>

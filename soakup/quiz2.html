@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoakUp - African Studies Quiz</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #eef2f7;
+            margin: 0;
+            padding: 0px;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            width: 95%;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #1a202c;
+            margin-bottom: 20px;
+        }
+        .progress-bar {
+            width: 100%;
+            background: #e2e8f0;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            background: #48bb78;
+            width: 0%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        .timer {
+            text-align: right;
+            font-size: 16px;
+            color: #4a5568;
+            margin-bottom: 20px;
+        }
+        .question {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2d3748;
+        }
+        .options label {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #f7fafc;
+            margin: 8px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        .options label:hover {
+            background: #edf2f7;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        input[type="radio"] {
+            margin-right: 12px;
+            accent-color: #3182ce;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+            gap: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.1s;
+        }
+        button:hover {
+            transform: translateY(-1px);
+        }
+        button:disabled {
+            background: #e2e8f0;
+            color: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+        }
+        #prev {
+            background: #718096;
+            color: #fff;
+        }
+        #prev:hover:not(:disabled) {
+            background: #5a6270;
+        }
+        #next {
+            background: #3182ce;
+            color: #fff;
+        }
+        #next:hover:not(:disabled) {
+            background: #2b6cb0;
+        }
+        #submit {
+            background: #e53e3e;
+            color: #fff;
+        }
+        #submit:hover:not(:disabled) {
+            background: #c53030;
+        }
+        #result {
+            margin-top: 30px;
+            font-size: 3px; /* Corrected from 3px to 18px */
+            color: #2d3748;
+        }
+        .result-header {
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+        .review-table {
+            width: 100%; /* Corrected from 100px to 100% */
+            border-collapse: collapse;
+            margin-top: 20px;
+            margin: auto;
+        }
+        .review-table th, .review-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+            word-wrap: break-word;
+            max-width: 200px; /* Added to prevent overflow */
+        }
+        .review-table th {
+            background: #edf2f7;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        .correct {
+            color: #48bb78;
+            font-weight: 500;
+        }
+        .incorrect {
+            color: #e53e3e;
+            font-weight: 500;
+        }
+        .correct-answer {
+            color: #48bb78;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Building Materials Quiz</h1>
+        <div class="progress-bar">
+            <div class="progress"></div>
+        </div>
+        <div class="timer">Time: <span id="time">00:00</span></div>
+        <div id="quiz"></div>
+        <div class="buttons">
+            <button id="prev" disabled>Previous</button>
+            <button id="submit">Submit</button>
+            <button id="next">Next</button>
+        </div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+       
+           const quizData = [
+    // Timber Basics and Advantages (Pages 2-7)
+    { question: "What is timber primarily processed into for construction purposes?", options: ["Sheets and panels", "Beams and planks", "Fibers and threads", "Blocks and cubes"], answer: "b" },
+    { question: "Which of the following is NOT a common use of timber in construction?", options: ["Houses", "Bridges", "Plywood", "Concrete reinforcement"], answer: "d" },
+    { question: "Why is timber preferred in earthquake-prone regions?", options: ["High density", "Light weight", "Corrosion resistance", "Low cost"], answer: "b" },
+    { question: "What advantage does timber have over cement and iron in marine works?", options: ["Higher strength", "Does not corrode", "Easier to shape", "Lower density"], answer: "b" },
+    { question: "Which property makes timber an excellent insulator?", options: ["High thermal conductivity", "Low electrical conductivity", "High density", "Moisture resistance"], answer: "b" },
+    { question: "What is a key benefit of timber’s salvage value?", options: ["Low maintenance", "High resale value", "Ease of transport", "Resistance to fungi"], answer: "b" },
+    { question: "How can timber structures be easily modified?", options: ["By adding concrete", "Through additions and alterations", "Using synthetic resins", "By seasoning"], answer: "b" },
+    { question: "What enhances timber’s strength when combined with other materials?", options: ["Steel attachments", "Paint coatings", "Moisture treatment", "Seasoning"], answer: "a" },
+
+    // Qualities of Good Timber (Pages 5-6)
+    { question: "Which quality indicates a good timber’s resistance to fungi and physical damage?", options: ["Light weight", "Hardness and durability", "Bright color", "High moisture content"], answer: "b" },
+    { question: "What should the fibers of good timber be like?", options: ["Twisted and loose", "Straight and compact", "Curved and sparse", "Knotty and irregular"], answer: "b" },
+    { question: "What defect should good timber be free from?", options: ["Uniform color", "Knots and shakes", "Heavy weight", "Sweet smell"], answer: "b" },
+    { question: "What sound indicates a good quality timber when struck?", options: ["Heavy dull sound", "Clear ringing sound", "Soft muffled sound", "No sound"], answer: "b" },
+    { question: "Why should timber be properly seasoned?", options: ["To increase weight", "To enhance workability", "To reduce durability", "To add moisture"], answer: "b" },
+    { question: "What color is typically associated with good timber from heartwood?", options: ["Light and pale", "Dark and uniform", "Green and uneven", "Yellow and streaked"], answer: "b" },
+    { question: "Which quality ensures timber can resist shocks effectively?", options: ["Toughness", "Workability", "Lightness", "Seasoning"], answer: "a" },
+    { question: "What indicates decayed timber when struck?", options: ["Clear ringing sound", "Heavy dull sound", "Sharp echo", "Light tap"], answer: "b" },
+
+    // Common Timber Types and Uses (Pages 8-15)
+    { question: "Where is bamboo predominantly used as a timber material?", options: ["North America", "South Asia", "Northern Europe", "Central Africa"], answer: "b" },
+    { question: "What is a key advantage of bamboo as a timber?", options: ["Slow growth", "Fast growth and high yield", "High density", "Resistance to moisture"], answer: "b" },
+    { question: "Which timber is widely used for furniture and cabinet-making due to its stability?", options: ["Oak", "Mahogany", "Walnut", "Bamboo"], answer: "b" },
+    { question: "What is a disadvantage of mahogany timber?", options: ["Low workability", "High cost", "Poor durability", "Light weight"], answer: "b" },
+    { question: "Oak timber is favored for which application due to its durability?", options: ["Musical instruments", "Light construction", "Veneers", "Tool handles"], answer: "b" },
+    { question: "What is a limitation of oak timber?", options: ["Susceptibility to insects", "Heavy and hard", "Low strength", "Poor workability"], answer: "b" },
+    { question: "Which timber is known for its decorative grain and use in fine woodworking?", options: ["Bamboo", "Mahogany", "Walnut", "Oak"], answer: "c" },
+    { question: "What makes walnut timber suitable for steam bending?", options: ["High stiffness", "Low stiffness", "High moisture content", "Low durability"], answer: "b" },
+
+    // Mechanical Properties and Defects (Pages 20-26)
+    { question: "Which mechanical property of timber is highest parallel to the grain?", options: ["Shearing strength", "Compressive strength", "Tensile strength", "Bending strength"], answer: "c" },
+    { question: "What is the shearing strength range of timber along the fibers?", options: ["30-77.5 N/mm²", "6.5-14.5 N/mm²", "80-190 N/mm²", "3-4 N/mm²"], answer: "b" },
+    { question: "What defect is a longitudinal crack normal to the annual rings?", options: ["Checks", "Shakes", "Knots", "Splits"], answer: "a" },
+    { question: "What causes heart shakes in timber?", options: ["Frost action", "Shrinkage of heartwood", "Insect attack", "Wind twisting"], answer: "b" },
+    { question: "Which defect appears as radial splits wide at the circumference?", options: ["Cup shakes", "Star shakes", "Ringall", "Knots"], answer: "b" },
+    { question: "What is the primary cause of knots in timber?", options: ["Fungal attack", "Buried branches", "Moisture loss", "Wind stress"], answer: "b" },
+
+    // Timber Products (Pages 35-49)
+    { question: "What is plywood made from?", options: ["Wood chips and resin", "Thin sheets of wood veneer", "Compressed straw", "Wood strips and glue"], answer: "b" },
+    { question: "Why is plywood resistant to cracking and splitting?", options: ["High moisture content", "Cross-layered veneers", "Synthetic binders", "Thick core"], answer: "b" },
+    { question: "What is a key advantage of particle board over solid wood?", options: ["Higher strength", "Lower cost and density", "Better appearance", "Resistance to moisture"], answer: "b" },
+    { question: "What is a disadvantage of particle board in moist environments?", options: ["High cost", "Expansion and discoloration", "Low workability", "Poor strength"], answer: "b" },
+    { question: "Laminated board is similar to plywood but differs in:", options: ["Use of synthetic resin", "Grain alignment of layers", "Thickness of veneers", "Absence of glue"], answer: "b" },
+    { question: "What material is used to make strawboard panels?", options: ["Wood veneer", "Compressed wheat or rice straw", "Particle chips", "Laminated strips"], answer: "b" },
+
+    // Metals (Pages 56-73)
+    { question: "What distinguishes ferrous metals from non-ferrous metals?", options: ["Presence of iron", "Light weight", "Corrosion resistance", "Low melting point"], answer: "a" },
+    { question: "Which property makes ferrous metals suitable for electrical motors?", options: ["High conductivity", "Magnetic properties", "Light weight", "Corrosion resistance"], answer: "b" },
+    { question: "What is a key advantage of non-ferrous metals like aluminum?", options: ["High density", "Lightweight and corrosion resistance", "Magnetic properties", "Low cost"], answer: "b" },
+    { question: "Which non-ferrous metal is valued for high electrical conductivity?", options: ["Zinc", "Copper", "Lead", "Tin"], answer: "b" }
+];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let userAnswers = [];
+        let time = 0;
+        let timerInterval;
+
+        const quizContainer = document.getElementById("quiz");
+        const prevButton = document.getElementById("prev");
+        const nextButton = document.getElementById("next");
+        const submitButton = document.getElementById("submit");
+        const resultDiv = document.getElementById("result");
+        const progress = document.querySelector(".progress");
+        const timeDisplay = document.getElementById("time");
+
+        // Airtable Configuration
+        const airtableBaseId = "appBA8BDAjCnEwbEb"; // Replace with your Airtable Base ID (e.g., "appXXXXXXXXXXXXXX")
+        const airtableTableName = "Quiz table";
+        const airtablePAT = "patcwZljMJW2c5hsB.4de15ac60a7791f322ba80c5a5fbb9135ac8c2663765c5e7073419f724eb31fe"; // Replace with your PAT (e.g., "patXXXXXXXXXXXXXX")
+
+        // Start Timer
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                time++;
+                let minutes = Math.floor(time / 60);
+                let seconds = time % 60;
+                timeDisplay.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+            }, 1000);
+        }
+
+        // Load Question
+        function loadQuestion() {
+            const q = quizData[currentQuestion];
+            quizContainer.innerHTML = `
+                <div class="question">${currentQuestion + 1}. ${q.question}</div>
+                <div class="options">
+                    ${q.options.map((option, index) => `
+                        <label>
+                            <input type="radio" name="q${currentQuestion}" value="${String.fromCharCode(97 + index)}" ${userAnswers[currentQuestion] === String.fromCharCode(97 + index) ? "checked" : ""}>
+                            ${option}
+                        </label>
+                    `).join("")}
+                </div>
+            `;
+            updateProgress();
+            prevButton.disabled = currentQuestion === 0;
+            nextButton.disabled = currentQuestion === quizData.length - 1;
+        }
+
+        // Update Progress Bar
+        function updateProgress() {
+            const percentage = ((currentQuestion + 1) / quizData.length) * 100;
+            progress.style.width = `${percentage}%`;
+        }
+
+        // Save Answer
+        function saveAnswer() {
+            const selected = document.querySelector(`input[name="q${currentQuestion}"]:checked`);
+            userAnswers[currentQuestion] = selected ? selected.value : null;
+        }
+
+        // Show Result with Improved Review
+        function showResult() {
+            clearInterval(timerInterval);
+            score = 0;
+            quizData.forEach((q, index) => {
+                if (userAnswers[index] === q.answer) score++;
+            });
+            quizContainer.innerHTML = "";
+            resultDiv.innerHTML = `
+                <div class="result-header">
+                    You scored ${score} out of ${quizData.length} (${Math.round((score / quizData.length) * 100)}%) in ${timeDisplay.textContent}
+                </div>
+                <table class="review-table">
+                    <thead>
+                        <tr>
+                            <th>Question</th>
+                            <th>Your Answer</th>
+                            <th>Correct Answer</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${quizData.map((q, i) => `
+                            <tr>
+                                <td>${i + 1}. ${q.question}</td>
+                                <td>${userAnswers[i] ? q.options[userAnswers[i].charCodeAt(0) - 97] : "Not answered"}</td>
+                                <td>${q.options[q.answer.charCodeAt(0) - 97]}</td>
+                                <td class="${userAnswers[i] === q.answer ? 'correct' : 'incorrect'}">
+                                    ${userAnswers[i] === q.answer ? "Correct" : "Incorrect"}
+                                </td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
+            `;
+            saveToServer();
+            prevButton.style.display = "none";
+            nextButton.style.display = "none";
+            submitButton.style.display = "none";
+        }
+
+        // Save Results to Airtable
+        function saveToServer() {
+            const data = {
+                fields: {
+                    UserID: "user123", // Replace with dynamic user ID logic if available
+                    QuizName: "African Studies Quiz",
+                    Score: score,
+                    Total: quizData.length,
+                    Time: time,
+                    Answers: JSON.stringify(userAnswers),
+                    Date: new Date().toISOString()
+                }
+            };
+
+            fetch(`https://api.airtable.com/v0/${airtableBaseId}/${airtableTableName}`, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${airtablePAT}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then(() => {
+                resultDiv.innerHTML += "<br><span class='correct'>Results saved successfully to Airtable!</span>";
+                console.log("Data saved to Airtable:", data);
+            })
+            .catch(error => {
+                resultDiv.innerHTML += "<br><span class='incorrect'>Error saving results to Airtable: " + error.message + "</span>";
+                console.error("Error saving to Airtable:", error);
+            });
+        }
+
+        // Event Listeners
+        prevButton.addEventListener("click", () => {
+            saveAnswer();
+            currentQuestion--;
+            loadQuestion();
+        });
+
+        nextButton.addEventListener("click", () => {
+            saveAnswer();
+            if (currentQuestion < quizData.length - 1) {
+                currentQuestion++;
+                loadQuestion();
+            }
+        });
+
+        submitButton.addEventListener("click", () => {
+            saveAnswer();
+            showResult();
+        });
+
+        // Initialize Quiz
+        startTimer();
+        loadQuestion();
+    </script>
+</body>
+</html>

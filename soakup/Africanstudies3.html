@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoakUp - African Studies Quiz</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #eef2f7;
+            margin: 0;
+            padding: 20px;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            width: 95%;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #1a202c;
+            margin-bottom: 20px;
+        }
+        .progress-bar {
+            width: 100%;
+            background: #e2e8f0;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            background: #48bb78;
+            width: 0%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        .timer {
+            text-align: right;
+            font-size: 16px;
+            color: #4a5568;
+            margin-bottom: 20px;
+        }
+        .question {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2d3748;
+        }
+        .options label {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #f7fafc;
+            margin: 8px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        .options label:hover {
+            background: #edf2f7;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        input[type="radio"] {
+            margin-right: 12px;
+            accent-color: #3182ce;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+            gap: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.1s;
+        }
+        button:hover {
+            transform: translateY(-1px);
+        }
+        button:disabled {
+            background: #e2e8f0;
+            color: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+        }
+        #prev {
+            background: #718096;
+            color: #fff;
+        }
+        #prev:hover:not(:disabled) {
+            background: #5a6270;
+        }
+        #next {
+            background: #3182ce;
+            color: #fff;
+        }
+        #next:hover:not(:disabled) {
+            background: #2b6cb0;
+        }
+        #submit {
+            background: #e53e3e;
+            color: #fff;
+        }
+        #submit:hover:not(:disabled) {
+            background: #c53030;
+        }
+        #result {
+            margin-top: 30px;
+            font-size: 3px; /* Corrected from 3px to 18px */
+            color: #2d3748;
+        }
+        .result-header {
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+        .review-table {
+            width: 100%; /* Corrected from 100px to 100% */
+            border-collapse: collapse;
+            margin-top: 20px;
+            margin: auto;
+        }
+        .review-table th, .review-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+            word-wrap: break-word;
+            max-width: 200px; /* Added to prevent overflow */
+        }
+        .review-table th {
+            background: #edf2f7;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        .correct {
+            color: #48bb78;
+            font-weight: 500;
+        }
+        .incorrect {
+            color: #e53e3e;
+            font-weight: 500;
+        }
+        .correct-answer {
+            color: #48bb78;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SoakUp - African Studies Quiz</h1>
+        <div class="progress-bar">
+            <div class="progress"></div>
+        </div>
+        <div class="timer">Time: <span id="time">00:00</span></div>
+        <div id="quiz"></div>
+        <div class="buttons">
+            <button id="prev" disabled>Previous</button>
+            <button id="submit">Submit</button>
+            <button id="next">Next</button>
+        </div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const quizData = [
+    { question: "All the following were challenges faced by African countries during independence, except?", options: ["Economic dependence on former colonial powers", "Political instability", "Strengthening of indigenous industries", "Ethnic conflicts due to colonial boundaries"], answer: "c" },
+    { question: "The term used to describe the continued economic control by former colonial powers after African independence is?", options: ["Pan-Africanism", "Neo-colonialism", "Assimilation", "Indirect Rule"], answer: "b" },
+    { question: "The following terms—Pan-, Neo-, Post-, Pre-—in the context of African independence movements respectively mean?", options: ["All, New, After, Before", "New, All, Before, After", "After, New, All, Before", "Before, All, New, After"], answer: "a" },
+    { question: "Which African country was the first to gain independence from colonial rule in 1957?", options: ["Nigeria", "Kenya", "Ghana", "South Africa"], answer: "c" },
+    { question: "Independence in Africa often led to the same political boundaries as those set during colonial rule, true or false?", options: ["I do not know", "True", "False", "None of the above"], answer: "b" },
+    { question: "The Organization of African Unity (OAU), established to promote African independence and unity, was founded in?", options: ["Addis Ababa, Ethiopia", "Accra, Ghana", "Nairobi, Kenya", "Lagos, Nigeria"], answer: "a" },
+    { question: "The Pan-African movement, which inspired African independence, was largely influenced by?", options: ["European colonial policies", "The African Diaspora", "The Berlin Conference", "None of the above"], answer: "b" },
+    { question: "A major challenge after African independence was the legacy of colonial education, which often?", options: ["Promoted African culture", "Created an elite class disconnected from the masses", "Encouraged economic growth", "Strengthened traditional values"], answer: "b" },
+    { question: "All the following were goals of the Organization of African Unity (OAU), except?", options: ["Promoting African unity", "Eradicating colonialism", "Establishing a single African government", "Defending African sovereignty"], answer: "c" },
+    { question: "The independence of many African countries was influenced by which major global event?", options: ["The Berlin Conference of 1884/85", "World War II", "The Cold War", "The Industrial Revolution"], answer: "b" },
+    { question: "The Mau Mau uprising, which contributed to independence, occurred in which African country?", options: ["Ghana", "Nigeria", "Kenya", "South Africa"], answer: "c" },
+    { question: "Only two African countries were independent by 1900, true or false?", options: ["I do not know", "True", "False", "None of the above"], answer: "b" },
+    { question: "The apartheid system, which delayed South Africa’s full independence for the majority, was established by?", options: ["The British colonial government", "The white minority government", "The African National Congress", "The United Nations"], answer: "b" },
+    { question: "A key figure in Ghana’s independence movement was?", options: ["Nelson Mandela", "Kwame Nkrumah", "Jomo Kenyatta", "Patrice Lumumba"], answer: "b" },
+    { question: "The independence of African countries often led to?", options: ["Economic self-sufficiency", "Political instability", "Cultural unity", "Strengthened traditional authority"], answer: "b" },
+    { question: "By 1960, how many African countries had gained independence, often referred to as the 'Year of Africa'?", options: ["5", "10", "17", "25"], answer: "c" },
+    { question: "Africa is the ___ continent to achieve widespread independence from colonial rule in the 20th century?", options: ["1st", "2nd", "3rd", "4th"], answer: "b" },
+    { question: "The independence of Congo in 1960 was marked by the leadership of?", options: ["Patrice Lumumba", "Kwame Nkrumah", "Jomo Kenyatta", "Nelson Mandela"], answer: "a" },
+    { question: "The term 'African Diaspora' in the context of independence movements refers to?", options: ["Africans living in Africa", "Africans fighting colonial rule", "Africans living outside Africa", "Africans promoting industrialization"], answer: "c" },
+    { question: "The independence movement in Algeria was primarily a struggle against which colonial power?", options: ["Britain", "France", "Belgium", "Portugal"], answer: "b" },
+    { question: "Pan-Africanism played a significant role in inspiring African independence movements, true or false?", options: ["True", "False"], answer: "a" },
+    { question: "Traditional African leaders often led the independence movements across the continent, true or false?", options: ["True", "False"], answer: "b" },
+    { question: "The independence of African countries eliminated all forms of colonial influence, true or false?", options: ["True", "False"], answer: "b" },
+    { question: "The Cold War had no impact on African independence movements, true or false?", options: ["True", "False"], answer: "b" },
+    { question: "The independence of South Africa for the majority population was achieved in 1994, true or false?", options: ["True", "False"], answer: "a" },
+    { question: "Kwame Nkrumah was a key advocate for neo-colonialism, true or false?", options: ["True", "False"], answer: "b" },
+    { question: "Post-independence Africa refers to the period before colonial rule in Africa, true or false?", options: ["True", "False"], answer: "b" },
+    { question: "The independence of many African countries was achieved through peaceful negotiations rather than armed struggle, true or false?", options: ["True", "False"], answer: "b" },
+    { question: "The Organization of African Unity (OAU) was established in 1963, true or false?", options: ["True", "False"], answer: "a" },
+    { question: "The legacy of colonial boundaries often led to ethnic conflicts after independence, true or false?", options: ["True", "False"], answer: "a" }
+];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let userAnswers = [];
+        let time = 0;
+        let timerInterval;
+
+        const quizContainer = document.getElementById("quiz");
+        const prevButton = document.getElementById("prev");
+        const nextButton = document.getElementById("next");
+        const submitButton = document.getElementById("submit");
+        const resultDiv = document.getElementById("result");
+        const progress = document.querySelector(".progress");
+        const timeDisplay = document.getElementById("time");
+
+        // Airtable Configuration
+        const airtableBaseId = "appBA8BDAjCnEwbEb"; // Replace with your Airtable Base ID (e.g., "appXXXXXXXXXXXXXX")
+        const airtableTableName = "Quiz table";
+        const airtablePAT = "patcwZljMJW2c5hsB.4de15ac60a7791f322ba80c5a5fbb9135ac8c2663765c5e7073419f724eb31fe"; // Replace with your PAT (e.g., "patXXXXXXXXXXXXXX")
+
+        // Start Timer
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                time++;
+                let minutes = Math.floor(time / 60);
+                let seconds = time % 60;
+                timeDisplay.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+            }, 1000);
+        }
+
+        // Load Question
+        function loadQuestion() {
+            const q = quizData[currentQuestion];
+            quizContainer.innerHTML = `
+                <div class="question">${currentQuestion + 1}. ${q.question}</div>
+                <div class="options">
+                    ${q.options.map((option, index) => `
+                        <label>
+                            <input type="radio" name="q${currentQuestion}" value="${String.fromCharCode(97 + index)}" ${userAnswers[currentQuestion] === String.fromCharCode(97 + index) ? "checked" : ""}>
+                            ${option}
+                        </label>
+                    `).join("")}
+                </div>
+            `;
+            updateProgress();
+            prevButton.disabled = currentQuestion === 0;
+            nextButton.disabled = currentQuestion === quizData.length - 1;
+        }
+
+        // Update Progress Bar
+        function updateProgress() {
+            const percentage = ((currentQuestion + 1) / quizData.length) * 100;
+            progress.style.width = `${percentage}%`;
+        }
+
+        // Save Answer
+        function saveAnswer() {
+            const selected = document.querySelector(`input[name="q${currentQuestion}"]:checked`);
+            userAnswers[currentQuestion] = selected ? selected.value : null;
+        }
+
+        // Show Result with Improved Review
+        function showResult() {
+            clearInterval(timerInterval);
+            score = 0;
+            quizData.forEach((q, index) => {
+                if (userAnswers[index] === q.answer) score++;
+            });
+            quizContainer.innerHTML = "";
+            resultDiv.innerHTML = `
+                <div class="result-header">
+                    You scored ${score} out of ${quizData.length} (${Math.round((score / quizData.length) * 100)}%) in ${timeDisplay.textContent}
+                </div>
+                <table class="review-table">
+                    <thead>
+                        <tr>
+                            <th>Question</th>
+                            <th>Your Answer</th>
+                            <th>Correct Answer</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${quizData.map((q, i) => `
+                            <tr>
+                                <td>${i + 1}. ${q.question}</td>
+                                <td>${userAnswers[i] ? q.options[userAnswers[i].charCodeAt(0) - 97] : "Not answered"}</td>
+                                <td>${q.options[q.answer.charCodeAt(0) - 97]}</td>
+                                <td class="${userAnswers[i] === q.answer ? 'correct' : 'incorrect'}">
+                                    ${userAnswers[i] === q.answer ? "Correct" : "Incorrect"}
+                                </td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
+            `;
+            saveToServer();
+            prevButton.style.display = "none";
+            nextButton.style.display = "none";
+            submitButton.style.display = "none";
+        }
+
+        // Save Results to Airtable
+        function saveToServer() {
+            const data = {
+                fields: {
+                    UserID: "user123", // Replace with dynamic user ID logic if available
+                    QuizName: "African Studies Quiz",
+                    Score: score,
+                    Total: quizData.length,
+                    Time: time,
+                    Answers: JSON.stringify(userAnswers),
+                    Date: new Date().toISOString()
+                }
+            };
+
+            fetch(`https://api.airtable.com/v0/${airtableBaseId}/${airtableTableName}`, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${airtablePAT}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then(() => {
+                resultDiv.innerHTML += "<br><span class='correct'>Results saved successfully to Airtable!</span>";
+                console.log("Data saved to Airtable:", data);
+            })
+            .catch(error => {
+                resultDiv.innerHTML += "<br><span class='incorrect'>Error saving results to Airtable: " + error.message + "</span>";
+                console.error("Error saving to Airtable:", error);
+            });
+        }
+
+        // Event Listeners
+        prevButton.addEventListener("click", () => {
+            saveAnswer();
+            currentQuestion--;
+            loadQuestion();
+        });
+
+        nextButton.addEventListener("click", () => {
+            saveAnswer();
+            if (currentQuestion < quizData.length - 1) {
+                currentQuestion++;
+                loadQuestion();
+            }
+        });
+
+        submitButton.addEventListener("click", () => {
+            saveAnswer();
+            showResult();
+        });
+
+        // Initialize Quiz
+        startTimer();
+        loadQuestion();
+    </script>
+</body>
+</html>
